@@ -3,66 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TV OIO</title>
+  <title>TV OIO - Central de Canais</title>
+  <!-- Biblioteca de Ícones Lucide -->
+  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; background-color: #0d1117; color: #fff; font-family: sans-serif; }
-    body { display: flex; flex-direction: column; align-items: center; padding: 15px; min-height: 100vh; }
-    .nav-channels { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 900px; justify-content: center; }
-    .btn-channel { background: #21262d; border: 1px solid #30363d; color: #fff; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+    body { background-color: #0d1117; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+    
+    .header { padding: 20px; background-color: #161b22; text-align: center; border-bottom: 1px solid #30363d; }
+    .header h1 { font-size: 22px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+    /* Barra de Navegação de Canais */
+    .nav-channels { display: flex; gap: 10px; overflow-x: auto; padding: 15px; background: #161b22; border-bottom: 1px solid #30363d; scrollbar-width: none; }
+    .nav-channels::-webkit-scrollbar { display: none; }
+    
+    .btn-channel { 
+      background: #21262d; border: 1px solid #30363d; color: #fff; 
+      padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; 
+      display: flex; align-items: center; gap: 8px; white-space: nowrap; transition: 0.2s; 
+    }
+    .btn-channel:hover { background: #30363d; }
     .btn-channel.active { background: #238636; border-color: #2ea043; }
-    .player-container { width: 100%; max-width: 900px; aspect-ratio: 16/9; background: #161b22; border-radius: 8px; overflow: hidden; position: relative; border: 1px solid #30363d; }
-    iframe { width: 100%; height: 100%; border: none; }
-    .fallback-box { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; padding: 20px; text-align: center; background: #161b22; }
-    .btn-play { background-color: #c4170c; color: white; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 6px; }
-    .hidden { display: none !important; }
+
+    /* Container Dinâmico do Canal */
+    #app-container { flex: 1; padding: 20px; width: 100%; max-width: 1200px; margin: 0 auto; }
+
+    /* Estilo Carrossel Netflix */
+    .categoria-section { margin-bottom: 30px; }
+    .categoria-section h3 { margin-bottom: 12px; font-size: 16px; color: #58a6ff; display: flex; align-items: center; gap: 8px; }
+    
+    .carrossel-horizontal {
+      display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; scroll-behavior: smooth;
+    }
+    .carrossel-horizontal::-webkit-scrollbar { height: 6px; }
+    .carrossel-horizontal::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+
+    .card-video {
+      min-width: 220px; max-width: 220px; background: #161b22; border-radius: 8px; 
+      overflow: hidden; border: 1px solid #30363d; cursor: pointer; flex-shrink: 0; transition: transform 0.2s;
+    }
+    .card-video:hover { transform: scale(1.03); border-color: #58a6ff; }
+    .card-video img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+    .card-video p { padding: 10px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #c9d1d9; }
+    
+    .loading-msg, .error-msg { color: #8b949e; font-size: 14px; padding: 10px; }
   </style>
 </head>
 <body>
 
-  <!-- Menu de seleção de canais -->
-  <div class="nav-channels">
-    <button class="btn-channel active" onclick="trocarCanal('globo', event)">Globo</button>
-    <button class="btn-channel" onclick="trocarCanal('sbt', event)">SBT</button>
-    <button class="btn-channel" onclick="trocarCanal('band', event)">Band</button>
+  <div class="header">
+    <h1><i data-lucide="tv"></i> TV OIO - Central de Streaming</h1>
   </div>
 
-  <div class="player-container">
-    <!-- Painel da Globo -->
-    <div id="box-globo" class="fallback-box">
-      <h2>Sinal Ao Vivo - Globo</h2>
-      <p>Acesse com sua Conta Globo gratuita para assistir à transmissão regional.</p>
-      <a href="https://globoplay.globo.com/agora-na-tv/" target="_blank" class="btn-play">Assistir no Globoplay</a>
-    </div>
-
-    <!-- Player YouTube para SBT e Band -->
-    <iframe id="yt-player" class="hidden" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+  <!-- Botões dos Canais -->
+  <div class="nav-channels" id="menu-canais">
+    <button class="btn-channel active" onclick="carregarCanal('globo', this)"><i data-lucide="play-circle"></i> Globo</button>
+    <button class="btn-channel" onclick="carregarCanal('band', this)"><i data-lucide="video"></i> Band</button>
+    <button class="btn-channel" onclick="carregarCanal('cultura', this)"><i data-lucide="book-open"></i> Cultura</button>
+    <button class="btn-channel" onclick="carregarCanal('tvescola', this)"><i data-lucide="graduation-cap"></i> TV Escola</button>
+    <button class="btn-channel" onclick="carregarCanal('canalfuturalive', this)"><i data-lucide="globe"></i> Canal Futura</button>
   </div>
 
-  <script>
-    const ytPlayer = document.getElementById('yt-player');
-    const boxGlobo = document.getElementById('box-globo');
+  <!-- Onde o JavaScript de cada canal vai injetar os 5 carrosséis -->
+  <div id="app-container"></div>
 
-    // Transmissões oficiais via YouTube
-    const canais = {
-      sbt: "https://www.youtube.com/embed/live_stream?channel=UC8Adf_fL109zE52Y9-yW_7A",
-      band: "https://www.youtube.com/embed/live_stream?channel=UC5m_C-9qR0B9kY_pG1K7S6g"
-    };
+  <script type="module">
+    import { carregarGlobo } from './js/globo.js';
+    import { carregarBand } from './js/band.js';
+    import { carregarCultura } from './js/cultura.js';
+    import { carregarTvEscola } from './js/tvescola.js';
+    import { carregarFutura } from './js/canalfuturalive.js';
 
-    function trocarCanal(canal, evt) {
-      document.querySelectorAll('.btn-channel').forEach(btn => btn.classList.remove('active'));
-      evt.target.classList.add('active');
+    window.carregarCanal = function(nomeCanal, btnElement) {
+      document.querySelectorAll('.btn-channel').forEach(b => b.classList.remove('active'));
+      btnElement.classList.add('active');
 
-      if (canal === 'globo') {
-        ytPlayer.classList.add('hidden');
-        ytPlayer.src = "";
-        boxGlobo.classList.remove('hidden');
-      } else {
-        boxGlobo.classList.add('hidden');
-        ytPlayer.src = canais[canal] || "";
-        ytPlayer.classList.remove('hidden');
-      }
+      const container = document.getElementById('app-container');
+      container.innerHTML = "";
+
+      if (nomeCanal === 'globo') carregarGlobo(container);
+      if (nomeCanal === 'band') carregarBand(container);
+      if (nomeCanal === 'cultura') carregarCultura(container);
+      if (nomeCanal === 'tvescola') carregarTvEscola(container);
+      if (nomeCanal === 'canalfuturalive') carregarFutura(container);
+
+      // Atualiza os ícones do Lucide na tela
+      lucide.createIcons();
     }
-  </script>
 
+    // Carrega a Globo por padrão ao abrir
+    window.onload = () => {
+      lucide.createIcons();
+      carregarGlobo(document.getElementById('app-container'));
+      lucide.createIcons();
+    };
+  </script>
 </body>
 </html>
+
