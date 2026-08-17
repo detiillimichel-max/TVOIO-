@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TV OIO</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; background-color: #0d1117; color: #fff; font-family: sans-serif; }
+    body { display: flex; flex-direction: column; align-items: center; padding: 15px; min-height: 100vh; }
+    .nav-channels { display: flex; gap: 10px; margin-bottom: 15px; width: 100%; max-width: 900px; justify-content: center; }
+    .btn-channel { background: #21262d; border: 1px solid #30363d; color: #fff; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    .btn-channel.active { background: #238636; border-color: #2ea043; }
+    .player-container { width: 100%; max-width: 900px; aspect-ratio: 16/9; background: #161b22; border-radius: 8px; overflow: hidden; position: relative; border: 1px solid #30363d; }
+    iframe { width: 100%; height: 100%; border: none; }
+    .fallback-box { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; padding: 20px; text-align: center; background: #161b22; }
+    .btn-play { background-color: #c4170c; color: white; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 6px; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <!-- Menu de seleção de canais -->
+  <div class="nav-channels">
+    <button class="btn-channel active" onclick="trocarCanal('globo', event)">Globo</button>
+    <button class="btn-channel" onclick="trocarCanal('sbt', event)">SBT</button>
+    <button class="btn-channel" onclick="trocarCanal('band', event)">Band</button>
+  </div>
+
+  <div class="player-container">
+    <!-- Painel da Globo -->
+    <div id="box-globo" class="fallback-box">
+      <h2>Sinal Ao Vivo - Globo</h2>
+      <p>Acesse com sua Conta Globo gratuita para assistir à transmissão regional.</p>
+      <a href="https://globoplay.globo.com/agora-na-tv/" target="_blank" class="btn-play">Assistir no Globoplay</a>
+    </div>
+
+    <!-- Player YouTube para SBT e Band -->
+    <iframe id="yt-player" class="hidden" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+  </div>
+
+  <script>
+    const ytPlayer = document.getElementById('yt-player');
+    const boxGlobo = document.getElementById('box-globo');
+
+    // Transmissões oficiais via YouTube
+    const canais = {
+      sbt: "https://www.youtube.com/embed/live_stream?channel=UC8Adf_fL109zE52Y9-yW_7A",
+      band: "https://www.youtube.com/embed/live_stream?channel=UC5m_C-9qR0B9kY_pG1K7S6g"
+    };
+
+    function trocarCanal(canal, evt) {
+      document.querySelectorAll('.btn-channel').forEach(btn => btn.classList.remove('active'));
+      evt.target.classList.add('active');
+
+      if (canal === 'globo') {
+        ytPlayer.classList.add('hidden');
+        ytPlayer.src = "";
+        boxGlobo.classList.remove('hidden');
+      } else {
+        boxGlobo.classList.add('hidden');
+        ytPlayer.src = canais[canal] || "";
+        ytPlayer.classList.remove('hidden');
+      }
+    }
+  </script>
+
+</body>
+</html>
