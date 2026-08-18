@@ -1,6 +1,4 @@
 export function carregarFutura(container) {
-  const API_KEY = "SUA_CHAVE_DE_API_AQUI";
-
   const categorias = [
     { titulo: "Canal Futura Ao Vivo", icone: "radio", query: "Canal Futura ao vivo stream" },
     { titulo: "Conexão e Reportagens", icone: "newspaper", query: "Canal Futura Conexao Futura" },
@@ -11,6 +9,5 @@ export function carregarFutura(container) {
 
   container.innerHTML = criarEstruturaCanal("Canal Futura - Transformação Social", categorias, "futura");
   lucide.createIcons();
-  carregarVideosAPI(categorias, 'futura', API_KEY);
+  carregarVideosAPI(categorias, 'futura');
 }
-
