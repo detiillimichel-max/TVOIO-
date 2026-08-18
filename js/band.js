@@ -1,6 +1,4 @@
 export function carregarBand(container) {
-  const API_KEY = "SUA_CHAVE_DE_API_AQUI";
-
   const categorias = [
     { titulo: "Transmissões Ao Vivo", icone: "radio", query: "Band ao vivo stream" },
     { titulo: "Jornalismo Band", icone: "newspaper", query: "Jornal da Band Boechat Urgente" },
@@ -11,6 +9,5 @@ export function carregarBand(container) {
 
   container.innerHTML = criarEstruturaCanal("Band - Rede de Televisão", categorias, "band");
   lucide.createIcons();
-  carregarVideosAPI(categorias, 'band', API_KEY);
+  carregarVideosAPI(categorias, 'band');
 }
-
