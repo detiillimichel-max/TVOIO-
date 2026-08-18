@@ -1,6 +1,4 @@
 export function carregarCultura(container) {
-  const API_KEY = "SUA_CHAVE_DE_API_AQUI";
-
   const categorias = [
     { titulo: "TV Cultura Ao Vivo", icone: "radio", query: "TV Cultura ao vivo 24h" },
     { titulo: "Jornal da Cultura", icone: "newspaper", query: "Jornal da Cultura reportagens" },
@@ -11,5 +9,5 @@ export function carregarCultura(container) {
 
   container.innerHTML = criarEstruturaCanal("TV Cultura - Educação e Cultura", categorias, "cultura");
   lucide.createIcons();
-  carregarVideosAPI(categorias, 'cultura', API_KEY);
+  carregarVideosAPI(categorias, 'cultura');
 }
