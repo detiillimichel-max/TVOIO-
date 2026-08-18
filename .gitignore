@@ -1,0 +1,6 @@
+# Local secrets / development files
+.env
+.env.*
+js/config.local.js
+config.local.js
+*.secret
