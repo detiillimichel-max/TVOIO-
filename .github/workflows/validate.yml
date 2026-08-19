@@ -1,0 +1,35 @@
+name: Validate TV OIO
+
+on:
+  push:
+    branches:
+      - "build/**"
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check js/app.js
+          node --check js/config.js
+          node --check js/globo.js
+          node --check js/band.js
+          node --check js/cultura.js
+          node --check js/tvescola.js
+          node --check js/canalfuturalive.js
+          node --check worker.js
+
+      - name: Verify frontend has no obvious secret files
+        run: |
+          test ! -f .env
+          test ! -f .dev.vars
