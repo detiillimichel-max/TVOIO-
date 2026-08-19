@@ -2,6 +2,8 @@ name = "oio-tv-api"
 main = "worker.js"
 compatibility_date = "2026-08-18"
 workers_dev = true
+keep_vars = true
 
 # API keys and tokens stay in Cloudflare Workers Secrets.
 # Never put secret values in this repository.
+# keep_vars preserves dashboard-managed plaintext variables during deploys.
