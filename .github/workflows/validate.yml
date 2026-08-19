@@ -3,6 +3,7 @@ name: Validate TV OIO
 on:
   push:
     branches:
+      - main
       - "build/**"
   pull_request:
     branches:
