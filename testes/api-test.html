@@ -2,49 +2,75 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>OIO TV — Teste das APIs</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>OIO TV — Laboratório de APIs</title>
 <style>
-:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0d0f14;color:#f5f7fa;font-family:system-ui,-apple-system,sans-serif;padding:18px}main{max-width:760px;margin:auto}h1{font-size:24px;margin:0 0 6px}p{color:#aab2bf}.bar{background:#171b22;border:1px solid #2a313c;border-radius:14px;padding:14px;margin:16px 0}input{width:100%;padding:12px;border-radius:10px;border:1px solid #39424f;background:#0e1117;color:#fff;font-size:14px}button{border:0;border-radius:10px;padding:12px 16px;background:#1677ff;color:#fff;font-weight:700;margin-top:10px;width:100%}.grid{display:grid;gap:10px}.card{background:#151922;border:1px solid #2a313c;border-radius:12px;padding:13px}.name{font-weight:800}.status{font-size:13px;margin-top:6px}.ok{border-left:4px solid #22c55e}.bad{border-left:4px solid #ef4444}.warn{border-left:4px solid #f59e0b}.muted{color:#8e98a6}.small{font-size:12px;word-break:break-word}code{color:#8ec5ff}.summary{font-weight:800;margin-bottom:8px}
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#090b10;color:#f5f7fa;font-family:system-ui,-apple-system,sans-serif}main{max-width:900px;margin:auto;padding:18px}.hero{background:linear-gradient(145deg,#172033,#0f131b);border:1px solid #293241;border-radius:18px;padding:20px;margin-bottom:14px}.hero h1{margin:0;font-size:25px}.hero p{margin:7px 0 0;color:#aeb8c6}.bar{background:#12161e;border:1px solid #293241;border-radius:16px;padding:14px;margin:12px 0}.row{display:flex;gap:10px;flex-wrap:wrap}input{flex:1;min-width:240px;padding:13px;border-radius:11px;border:1px solid #394554;background:#0b0e13;color:#fff;font-size:14px}button{border:0;border-radius:11px;padding:13px 18px;background:#1683ff;color:#fff;font-weight:800;cursor:pointer}button.secondary{background:#252c36}.summary{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:7px 10px;border-radius:999px;background:#202733;font-size:12px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.card{background:#12161e;border:1px solid #293241;border-radius:14px;padding:13px;min-height:110px}.card.ok{border-left:4px solid #22c55e}.card.bad{border-left:4px solid #ef4444}.card.warn{border-left:4px solid #f59e0b}.card.pending{border-left:4px solid #64748b}.name{font-weight:850;font-size:16px}.kind{color:#7f8da1;font-size:11px;text-transform:uppercase;margin-top:2px}.status{font-weight:750;margin-top:9px}.detail{color:#9ca8b8;font-size:12px;line-height:1.45;margin-top:5px;word-break:break-word}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#64748b;margin-right:6px}.ok .dot{background:#22c55e}.bad .dot{background:#ef4444}.warn .dot{background:#f59e0b}.pending .dot{background:#64748b}.note{font-size:12px;color:#8793a4;line-height:1.5}.danger{color:#ff7777}.success{color:#6ee7a1}.testbar{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}.hidden{display:none}@media(max-width:600px){main{padding:12px}.hero h1{font-size:21px}.row button{width:100%}}
 </style>
 </head>
 <body><main>
-<h1>OIO TV — Laboratório de APIs</h1>
-<p>Teste isolado. Não altera o aplicativo principal nem expõe nenhuma chave.</p>
-<div class="bar">
-<label>URL do Cloudflare Worker</label>
-<input id="worker" value="https://oio-tv-api.detiillimichel.workers.dev">
-<button id="run">Testar APIs agora</button>
-</div>
-<div id="summary" class="bar">Aguardando teste.</div>
-<div id="results" class="grid"></div>
+<section class="hero"><h1>📺 OIO TV — Laboratório de APIs</h1><p>Teste real das integrações pelo Cloudflare Worker. Nenhuma chave aparece no navegador.</p></section>
+<section class="bar">
+<div class="row"><input id="worker" value="https://oio-tv-api.detiillimichel.workers.dev" aria-label="URL do Cloudflare Worker"><button id="run">Testar todas as APIs</button><button id="clear" class="secondary">Limpar</button></div>
+<p class="note">O teste diferencia: <b>OK</b> = upstream respondeu; <b>credencial</b> = rota chegou ao serviço mas a autenticação falhou; <b>rota</b> = o Worker ainda não possui aquele endpoint; <b>erro de parâmetro</b> = a rota existe mas o contrato precisa ser ajustado.</p>
+</section>
+<section class="bar"><div id="summary" class="summary"><span class="pill">Aguardando teste</span></div></section>
+<section id="results" class="grid"></section>
 <script>
 const tests=[
- ['YouTube','/youtube/search?q=teste','GET'],
- ['TMDB','/tmdb/search?q=teste','GET'],
- ['Pexels','/pexels/search?q=natureza','GET'],
- ['Pixabay','/pixabay/search?q=natureza','GET'],
- ['GNews','/gnews/search?q=brasil','GET'],
- ['Guardian','/guardian/search?q=technology','GET'],
- ['NASA','/nasa/search?q=space','GET'],
- ['Europeana','/europeana/search?q=history','GET'],
- ['DPLA','/dpla/search?q=history','GET'],
- ['Open Library','/openlibrary/search?q=dom+quixote','GET'],
- ['Open-Meteo','/openmeteo/weather?latitude=-23.55&longitude=-46.63','GET'],
- ['Spotify','/spotify/search?q=legiao+urbana&type=track','GET'],
- ['Vimeo','/vimeo/search?q=nature','GET']
+ {name:'YouTube',group:'Vídeo',method:'GET',path:'/youtube/search?q=teste&maxResults=3'},
+ {name:'Vimeo',group:'Vídeo',method:'GET',path:'/vimeo/search?q=nature&limit=3'},
+ {name:'Twitch',group:'Vídeo',method:'GET',path:'/twitch/search?q=gaming&limit=3'},
+ {name:'NARA',group:'Vídeo',method:'GET',path:'/nara/search?q=apollo&limit=3'},
+ {name:'NASA',group:'Vídeo/conteúdo',method:'GET',path:'/nasa/search?q=space&limit=3'},
+ {name:'DPLA',group:'Vídeo/conteúdo',method:'GET',path:'/dpla/search?q=history&limit=3'},
+ {name:'Europeana',group:'Vídeo/conteúdo',method:'GET',path:'/europeana/search?q=history&limit=3'},
+ {name:'Facebook',group:'Vídeo/conteúdo',method:'GET',path:'/facebook/search?q=video&limit=3'},
+ {name:'Pexels',group:'Vídeo/conteúdo',method:'GET',path:'/pexels/search?q=nature&limit=3'},
+ {name:'Pixabay',group:'Vídeo/conteúdo',method:'GET',path:'/pixabay/search?q=nature&limit=3'},
+ {name:'Jamendo',group:'Música',method:'GET',path:'/jamendo/search?q=music&limit=3'},
+ {name:'Spotify',group:'Música',method:'GET',path:'/spotify/search?q=music&type=track&limit=3'},
+ {name:'Audius',group:'Música',method:'GET',path:'/audius/search?q=music&limit=3'},
+ {name:'Guardian',group:'Notícias',method:'GET',path:'/guardian/search?q=technology&limit=3'},
+ {name:'GNews',group:'Notícias',method:'GET',path:'/gnews/search?q=brasil&limit=3'},
+ {name:'Gemini',group:'IA',method:'POST',path:'/gemini',body:{prompt:'Responda apenas: OIO OK'}},
+ {name:'Groq',group:'IA',method:'POST',path:'/groq',body:{prompt:'Responda apenas: OIO OK'}},
+ {name:'Hugging Face',group:'IA',method:'POST',path:'/huggingface',body:{prompt:'teste'}},
+ {name:'Qwen',group:'IA',method:'POST',path:'/qwen',body:{prompt:'Responda apenas: OIO OK'}},
+ {name:'ElevenLabs',group:'IA/áudio',method:'GET',path:'/elevenlabs/text-to-speech?text=OIO%20teste'},
+ {name:'TMDB',group:'Conteúdo',method:'GET',path:'/tmdb/search?q=matrix'},
+ {name:'DailyMotion',group:'Vídeo',method:'GET',path:'/daily/search?q=nature&limit=3'},
+ {name:'VAPID',group:'Web Push',method:'GET',path:'/vapid/test'}
 ];
 const esc=s=>String(s??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\\':'&#92;'}[c]));
-function card(name,cls,status,detail){return `<div class="card ${cls}"><div class="name">${esc(name)}</div><div class="status">${esc(status)}</div><div class="small muted">${esc(detail)}</div></div>`}
-async function testOne(base,[name,path]){
- const t=performance.now();
- try{const r=await fetch(base.replace(/\\/$/,'')+path,{cache:'no-store'});const text=await r.text();let data;try{data=JSON.parse(text)}catch{data=null};const ms=Math.round(performance.now()-t);const ok=r.ok;let detail=data?.error||data?.message||(data?.results?'Resultados recebidos':data?.photos?'Fotos recebidas':data?.items?'Itens recebidos':data?.tracks?'Faixas recebidas':data?.data?'Dados recebidos':text.slice(0,180));return {html:card(name,ok?'ok':'bad',ok?'✓ API respondeu':'✕ API respondeu com erro',`HTTP ${r.status} • ${ms} ms • ${detail}`),ok}}
- catch(e){return {html:card(name,'bad','✕ Falha de conexão',e.message),ok:false}}
+function classify(status,data,text){
+ if(status>=200&&status<300)return ['ok','✓ Funcionando','HTTP '+status+(data?.items?' • itens recebidos':data?.results?' • resultados recebidos':data?.data?' • dados recebidos':'')];
+ if(status===401||status===403)return ['bad','✕ Credencial recusada','HTTP '+status+' • a rota chegou ao serviço, mas a autenticação foi recusada'];
+ if(status===404)return ['warn','⚠ Rota não encontrada','HTTP 404 • o Worker ainda não expõe esta rota'];
+ if(status===400)return ['warn','⚠ Parâmetro/contrato','HTTP 400 • '+(data?.error||data?.message||'a rota respondeu 400')];
+ if(status>=500)return ['bad','✕ Erro no Worker/upstream','HTTP '+status+' • '+(data?.error||data?.message||'erro do servidor')];
+ return ['warn','⚠ Resposta inesperada','HTTP '+status+' • '+(data?.error||data?.message||text.slice(0,160))];
 }
-async function run(){const base=document.getElementById('worker').value.trim();const out=document.getElementById('results');const sum=document.getElementById('summary');out.innerHTML='';sum.textContent='Testando /health...';
- let health;
- try{const r=await fetch(base.replace(/\\/$/,'')+'/health',{cache:'no-store'});const d=await r.json();health=d;sum.innerHTML=`<div class="summary">Health: ${r.ok?'✓ respondeu':'✕ erro'} • HTTP ${r.status}</div><div class="small">Secrets detectados pelo Worker: ${esc(Object.entries(d.providers||{}).filter(([,v])=>v).map(([k])=>k).join(', ')||'nenhum')}</div>`}catch(e){sum.innerHTML=`<div class="summary">✕ Não consegui alcançar o Worker</div><div class="small">${esc(e.message)}</div>`;return}
- const results=await Promise.all(tests.map(x=>testOne(base,x)));out.innerHTML=results.map(x=>x.html).join('');const good=results.filter(x=>x.ok).length;sum.innerHTML+=`<div class="small" style="margin-top:8px">Testes reais: <b>${good}/${results.length}</b> responderam com HTTP 2xx.</div>`;
+function card(t,cls,status,detail){return `<article class="card ${cls}"><div class="name"><span class="dot"></span>${esc(t.name)}</div><div class="kind">${esc(t.group)} • ${esc(t.method)}</div><div class="status">${esc(status)}</div><div class="detail">${esc(detail)}</div></article>`}
+async function one(base,t){
+ const start=performance.now();
+ try{
+  const init={method:t.method,cache:'no-store',headers:{Accept:'application/json'}};
+  if(t.body){init.headers['Content-Type']='application/json';init.body=JSON.stringify(t.body)}
+  const r=await fetch(base+t.path,init);const text=await r.text();let data=null;try{data=text?JSON.parse(text):null}catch{}
+  const ms=Math.round(performance.now()-start);const [cls,status,detail]=classify(r.status,data,text);
+  return {ok:cls==='ok',html:card(t,cls,status,`${detail} • ${ms} ms`)};
+ }catch(e){return {ok:false,html:card(t,'bad','✕ Falha de conexão',`${e.message} • ${Math.round(performance.now()-start)} ms`)};}
 }
-document.getElementById('run').onclick=run;
+async function health(base){try{const r=await fetch(base+'/health',{cache:'no-store'});const d=await r.json();return {ok:r.ok,data:d,status:r.status}}catch(e){return {ok:false,error:e.message}}}
+async function run(){
+ const base=document.getElementById('worker').value.trim().replace(/\/$/,'');if(!base)return;
+ const out=document.getElementById('results'),sum=document.getElementById('summary');out.innerHTML=tests.map(t=>card(t,'pending','⏳ Aguardando','')).join('');sum.innerHTML='<span class="pill">Testando Worker…</span>';
+ const h=await health(base);if(!h.ok){sum.innerHTML=`<span class="pill danger">✕ Worker inacessível: ${esc(h.error)}</span>`;return}
+ const providerCount=Object.values(h.data?.providers||{}).filter(Boolean).length;
+ sum.innerHTML=`<span class="pill success">✓ Worker respondeu HTTP ${h.status}</span><span class="pill">Health detectou ${providerCount} provedores</span><span class="pill">Testando ${tests.length} integrações reais</span>`;
+ const results=await Promise.all(tests.map(t=>one(base,t)));out.innerHTML=results.map(r=>r.html).join('');const good=results.filter(r=>r.ok).length;const bad=results.length-good;
+ sum.innerHTML+=`<span class="pill">Resultado: ${good} OK • ${bad} pendentes/erro</span>`;
+}
+document.getElementById('run').onclick=run;document.getElementById('clear').onclick=()=>{document.getElementById('results').innerHTML='';document.getElementById('summary').innerHTML='<span class="pill">Aguardando teste</span>'};
 </script></main></body></html>
