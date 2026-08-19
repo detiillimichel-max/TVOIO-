@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080b12">
+  <meta name="description" content="TV OIO — central de áudio com descoberta e reprodução de músicas.">
+  <title>TV OIO — Áudio</title>
+  <link rel="stylesheet" href="./css/audio.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="back" href="./index.html" aria-label="Voltar">‹</a>
+      <div class="brand">
+        <div class="logo">♫</div>
+        <div><strong>TV OIO</strong><span>Central de Áudio</span></div>
+      </div>
+      <div class="api-state" id="api-state"><i></i><span>Conectando…</span></div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <p class="eyebrow">AUDIUS · MÚSICA ABERTA</p>
+        <h1>Descubra música.<br><em>Ouça agora.</em></h1>
+        <p class="hero-copy">Pesquisa, descoberta e reprodução em uma interface própria do TV OIO. Nenhuma chave fica no navegador.</p>
+        <form id="search-form" class="search" role="search">
+          <input id="query" type="search" autocomplete="off" placeholder="Buscar artista, faixa ou gênero…" aria-label="Buscar música">
+          <button type="submit">Buscar</button>
+        </form>
+      </section>
+
+      <section class="toolbar">
+        <button class="filter active" data-mode="trending">Em alta</button>
+        <button class="filter" data-mode="search">Resultados</button>
+        <span id="result-count"></span>
+      </section>
+
+      <section id="message" class="message" hidden></section>
+      <section id="tracks" class="tracks" aria-live="polite"></section>
+    </main>
+
+    <footer>
+      <span>TV OIO</span>
+      <span>•</span>
+      <span>Áudio protegido por gateway</span>
+    </footer>
+  </div>
+
+  <div class="player" id="player" aria-label="Player de áudio">
+    <div class="player-art" id="player-art">♫</div>
+    <div class="player-meta"><strong id="player-title">Nada tocando</strong><span id="player-artist">Escolha uma faixa</span></div>
+    <button id="play-pause" class="play" type="button" aria-label="Reproduzir">▶</button>
+    <input id="volume" type="range" min="0" max="1" step="0.05" value="0.9" aria-label="Volume">
+    <audio id="audio" preload="none"></audio>
+  </div>
+
+  <script src="./js/audio.js"></script>
+</body>
+</html>
