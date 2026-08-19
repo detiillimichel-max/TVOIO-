@@ -275,6 +275,26 @@ async function groq(url, env, request) {
   }));
 }
 
+async function qwen(url, env, request) {
+  const key = requiredSecret(env, "QWEN_API_KEY", "QWEN_API");
+  const body = await aiJson(request);
+  const prompt = body.prompt || queryParam(url, "prompt");
+  if (!prompt) return error("Informe prompt.");
+  const model = body.model || queryParam(url, "model", "qwen-plus");
+  const endpoint = "https://dashscope-us.aliyuncs.com/compatible-mode/v1/chat/completions";
+  return json(await upstream(endpoint, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: "user", content: prompt }],
+    }),
+  }));
+}
+
 function health(env) {
   const providers = {
     youtube: !!secret(env, "YOUTUBE_API_KEY", "YOUTUBE_API", "YOUTUBE"),
@@ -292,6 +312,7 @@ function health(env) {
     elevenlabs: !!secret(env, "ELEVENLABS_API_KEY", "ELEVENLABS_API", "ELEVENLABS"),
     gemini: !!secret(env, "GEMINI_API_KEY", "GEMINI_API"),
     groq: !!secret(env, "GROQ_API_KEY", "GROQ_API"),
+    qwen: !!secret(env, "QWEN_API_KEY", "QWEN_API"),
   };
   return json({ ok: true, service: "oio-tv-api", version: "1.0.0", providers });
 }
@@ -318,6 +339,8 @@ export default {
       if (url.pathname === "/elevenlabs/tts") return await elevenlabs(url, env);
       if (url.pathname === "/ai/gemini") return await gemini(url, env, request);
       if (url.pathname === "/ai/groq") return await groq(url, env, request);
+      if (url.pathname === "/ai/qwen") return await qwen(url, env, request);
+
       return error("Rota não encontrada.", 404);
     } catch (e) {
       console.error("OIO API error", e);
