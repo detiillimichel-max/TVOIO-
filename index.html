@@ -2,122 +2,70 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TV OIO - Central de Canais</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#070a0f">
+  <meta name="description" content="TV OIO — central de canais, vídeos e conteúdo por tema.">
+  <title>TV OIO — Central de Streaming</title>
+  <link rel="stylesheet" href="./css/style.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="./js/config.js"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
-    body { background-color: #0d1117; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
-    .header { padding: 20px; background-color: #161b22; text-align: center; border-bottom: 1px solid #30363d; }
-    .header h1 { font-size: 22px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-    .nav-channels { display: flex; gap: 10px; overflow-x: auto; padding: 15px; background: #161b22; border-bottom: 1px solid #30363d; scrollbar-width: none; }
-    .nav-channels::-webkit-scrollbar { display: none; }
-    .btn-channel { background: #21262d; border: 1px solid #30363d; color: #fff; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; white-space: nowrap; transition: 0.2s; }
-    .btn-channel:hover { background: #30363d; }
-    .btn-channel.active { background: #238636; border-color: #2ea043; }
-    #app-container { flex: 1; padding: 20px; width: 100%; max-width: 1200px; margin: 0 auto; }
-    .categoria-section { margin-bottom: 30px; }
-    .categoria-section h3 { margin-bottom: 12px; font-size: 16px; color: #58a6ff; display: flex; align-items: center; gap: 8px; }
-    .carrossel-horizontal { display: flex; gap: 16px; overflow-x: auto; padding: 8px 4px 16px 4px; scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: #30363d #0d1117; }
-    .carrossel-horizontal::-webkit-scrollbar { height: 6px; }
-    .carrossel-horizontal::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
-    .card-video { min-width: 230px; max-width: 230px; background: #161b22; border-radius: 10px; overflow: hidden; border: 1px solid #30363d; cursor: pointer; flex-shrink: 0; transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; }
-    .card-video:hover { transform: translateY(-4px); border-color: #58a6ff; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
-    .thumbnail-wrapper { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; overflow: hidden; }
-    .thumbnail-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
-    .card-video:hover img { transform: scale(1.05); }
-    .play-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; color: #fff; }
-    .card-video:hover .play-overlay { opacity: 1; }
-    .card-video p { padding: 12px; font-size: 13px; line-height: 1.4; color: #c9d1d9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
-    .loading-msg, .error-msg { color: #8b949e; font-size: 14px; padding: 10px; }
-    .error-msg { color: #f85149; }
-  </style>
+  <script src="./js/app.js"></script>
 </head>
 <body>
-  <div class="header">
-    <h1><i data-lucide="tv"></i> TV OIO - Central de Streaming</h1>
-  </div>
-
-  <div class="nav-channels" id="menu-canais">
-    <button class="btn-channel active" onclick="carregarCanal('globo', this)"><i data-lucide="play-circle"></i> Globo</button>
-    <button class="btn-channel" onclick="carregarCanal('band', this)"><i data-lucide="video"></i> Band</button>
-    <button class="btn-channel" onclick="carregarCanal('cultura', this)"><i data-lucide="book-open"></i> Cultura</button>
-    <button class="btn-channel" onclick="carregarCanal('tvescola', this)"><i data-lucide="graduation-cap"></i> TV Escola</button>
-    <button class="btn-channel" onclick="carregarCanal('canalfuturalive', this)"><i data-lucide="globe"></i> Canal Futura</button>
-  </div>
-
-  <div id="app-container"></div>
-
-  <script>
-    window.criarEstruturaCanal = function(tituloHeader, categorias, prefixoId) {
-      return `
-        <div class="canal-wrapper">
-          <div class="canal-banner" style="background: linear-gradient(135deg, #21262d 0%, #0d1117 100%); padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 1px solid #30363d;">
-            <h2 style="font-size: 22px; color: #fff; display: flex; align-items: center; gap: 10px;">
-              <i data-lucide="tv" style="color: #238636;"></i> ${tituloHeader}
-            </h2>
-            <p style="color: #8b949e; font-size: 13px; margin-top: 5px;">Explore os carrosséis abaixo e assista instantaneamente.</p>
-          </div>
-          ${categorias.map((cat, idx) => `
-            <div class="categoria-section">
-              <h3><i data-lucide="${cat.icone}" style="color: #58a6ff;"></i> ${cat.titulo}</h3>
-              <div class="carrossel-horizontal" id="carrossel-${prefixoId}-${idx}">
-                <div class="loading-msg">Carregando conteúdos...</div>
-              </div>
-            </div>
-          `).join('')}
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-mark"><i data-lucide="tv" width="21" height="21"></i></div>
+          <div><div class="brand-title">TV OIO</div><div class="brand-subtitle">Central de Streaming</div></div>
         </div>
-      `;
-    };
+        <form class="search" id="search-form" role="search">
+          <span class="search-icon"><i data-lucide="search" width="18" height="18"></i></span>
+          <input id="search-input" type="search" autocomplete="off" placeholder="Buscar vídeos, programas, notícias…" aria-label="Buscar conteúdo">
+          <button class="search-clear" id="search-clear" type="button" aria-label="Limpar busca">×</button>
+        </form>
+        <div class="status-pill" id="api-status"><span class="status-dot"></span>Verificando API…</div>
+      </div>
+      <nav class="nav" aria-label="Canais">
+        <button class="nav-btn active" data-channel="globo" type="button"><i data-lucide="play-circle" width="17"></i>Globo</button>
+        <button class="nav-btn" data-channel="band" type="button"><i data-lucide="video" width="17"></i>Band</button>
+        <button class="nav-btn" data-channel="cultura" type="button"><i data-lucide="book-open" width="17"></i>Cultura</button>
+        <button class="nav-btn" data-channel="tvescola" type="button"><i data-lucide="graduation-cap" width="17"></i>TV Escola</button>
+        <button class="nav-btn" data-channel="canalfuturalive" type="button"><i data-lucide="globe-2" width="17"></i>Canal Futura</button>
+      </nav>
+    </header>
 
-    // A chave do YouTube NÃO fica no frontend.
-    // O backend seguro deve expor GET /youtube/search?q=... e usar o Secret no servidor.
-    window.carregarVideosAPI = async function(categorias, prefixoId) {
-      const baseUrl = window.TVOIO_CONFIG?.apiBaseUrl?.replace(/\/$/, '');
+    <main>
+      <section class="hero">
+        <div>
+          <div class="eyebrow"><i data-lucide="sparkles" width="14"></i> TV OIO</div>
+          <h1>Um lugar para descobrir o que assistir.</h1>
+          <p>Escolha um canal ou pesquise diretamente. O frontend usa o gateway seguro do OIO TV para buscar conteúdo sem expor chaves de API no navegador.</p>
+          <div class="hero-actions">
+            <button class="primary" type="button" onclick="document.getElementById('search-input').focus()"><i data-lucide="search" width="17"></i>Começar uma busca</button>
+            <button class="secondary" type="button" onclick="window.carregarCanal('globo')"><i data-lucide="play" width="17"></i>Explorar Globo</button>
+          </div>
+        </div>
+        <div class="hero-side">
+          <div class="stat"><strong>5</strong><span>canais</span></div>
+          <div class="stat"><strong id="provider-count">—</strong><span>serviços ativos</span></div>
+          <div class="stat"><strong>API</strong><span>gateway seguro</span></div>
+          <div class="stat"><strong>0</strong><span>chaves no frontend</span></div>
+        </div>
+      </section>
 
-      categorias.forEach(async (cat, idx) => {
-        const secao = document.getElementById(`carrossel-${prefixoId}-${idx}`);
-        if (!secao) return;
+      <section class="search-results" id="search-results" aria-live="polite">
+        <div class="section-title"><div><h2>Resultados da busca</h2><p>Vídeos encontrados pelo gateway OIO TV.</p></div></div>
+        <div class="result-grid" id="result-grid"></div>
+      </section>
 
-        if (!baseUrl) {
-          secao.innerHTML = '<p class="error-msg">Backend de APIs ainda não configurado. As chaves permanecem protegidas.</p>';
-          return;
-        }
-
-        try {
-          const url = `${baseUrl}/youtube/search?q=${encodeURIComponent(cat.query)}&maxResults=8`;
-          const res = await fetch(url, { headers: { Accept: 'application/json' } });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
-
-          if (data.items && data.items.length > 0) {
-            secao.innerHTML = data.items.map(item => {
-              const videoId = item.id?.videoId;
-              const title = item.snippet?.title || 'Vídeo sem título';
-              const thumb = item.snippet?.thumbnails?.medium?.url || (videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : '');
-              if (!videoId) return '';
-              return `
-                <div class="card-video" onclick="window.open('https://www.youtube.com/watch?v=${videoId}', '_blank', 'noopener,noreferrer')">
-                  <div class="thumbnail-wrapper">
-                    <img src="${thumb}" alt="${title.replace(/"/g, '&quot;')}" loading="lazy">
-                    <div class="play-overlay"><i data-lucide="play"></i></div>
-                  </div>
-                  <p title="${title.replace(/"/g, '&quot;')}">${title}</p>
-                </div>
-              `;
-            }).join('') || '<p class="error-msg">Nenhum vídeo válido disponível.</p>';
-            lucide.createIcons();
-          } else {
-            secao.innerHTML = '<p class="error-msg">Nenhum vídeo disponível no momento.</p>';
-          }
-        } catch (e) {
-          console.error('TV OIO API:', e);
-          secao.innerHTML = '<p class="error-msg">Não foi possível carregar o conteúdo agora.</p>';
-        }
-      });
-    };
-  </script>
+      <section>
+        <div class="section-title"><div><h2>Agora no TV OIO</h2><p>Conteúdo organizado por canal e categoria.</p></div></div>
+        <div id="app-container"><div class="loading-msg">Abrindo Globo…</div></div>
+      </section>
+    </main>
+    <footer>TV OIO · Frontend GitHub Pages · APIs protegidas pelo Cloudflare Worker</footer>
+  </div>
 
   <script type="module">
     import { carregarGlobo } from './js/globo.js';
@@ -126,25 +74,13 @@
     import { carregarTvEscola } from './js/tvescola.js';
     import { carregarFutura } from './js/canalfuturalive.js';
 
-    window.carregarCanal = function(nomeCanal, btnElement) {
-      document.querySelectorAll('.btn-channel').forEach(b => b.classList.remove('active'));
-      btnElement.classList.add('active');
-      const container = document.getElementById('app-container');
-      container.innerHTML = '';
-
-      if (nomeCanal === 'globo') carregarGlobo(container);
-      if (nomeCanal === 'band') carregarBand(container);
-      if (nomeCanal === 'cultura') carregarCultura(container);
-      if (nomeCanal === 'tvescola') carregarTvEscola(container);
-      if (nomeCanal === 'canalfuturalive') carregarFutura(container);
-      lucide.createIcons();
-    };
-
-    window.onload = () => {
-      lucide.createIcons();
-      carregarGlobo(document.getElementById('app-container'));
-      lucide.createIcons();
-    };
+    window._channelLoaders.globo = carregarGlobo;
+    window._channelLoaders.band = carregarBand;
+    window._channelLoaders.cultura = carregarCultura;
+    window._channelLoaders.tvescola = carregarTvEscola;
+    window._channelLoaders.canalfuturalive = carregarFutura;
+    window.carregarCanal('globo');
+    if (window.lucide) window.lucide.createIcons();
   </script>
 </body>
 </html>
