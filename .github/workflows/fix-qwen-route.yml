@@ -1,0 +1,78 @@
+name: Add Qwen Worker route
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-worker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add Qwen route if missing
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path("worker.js")
+          s = p.read_text(encoding="utf-8")
+
+          if "async function qwen(" not in s:
+              marker = "function health(env) {"
+              qwen = r'''async function qwen(url, env, request) {
+            const key = requiredSecret(env, "QWEN_API_KEY", "QWEN_API");
+            const body = await aiJson(request);
+            const prompt = body.prompt || queryParam(url, "prompt");
+            if (!prompt) return error("Informe prompt.");
+            const model = body.model || queryParam(url, "model", "qwen-plus");
+            const endpoint = "https://dashscope-us.aliyuncs.com/compatible-mode/v1/chat/completions";
+            return json(await upstream(endpoint, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${key}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                model,
+                messages: [{ role: "user", content: prompt }],
+              }),
+            }));
+          }
+
+          '''
+              if marker not in s:
+                  raise SystemExit("health marker not found")
+              s = s.replace(marker, qwen + marker, 1)
+
+          route_marker = '      if (url.pathname === "/ai/groq") return await groq(url, env, request);'
+          qwen_route = '      if (url.pathname === "/ai/qwen") return await qwen(url, env, request);\n'
+          if 'url.pathname === "/ai/qwen"' not in s:
+              if route_marker not in s:
+                  raise SystemExit("route marker not found")
+              s = s.replace(route_marker, route_marker + "\n" + qwen_route.rstrip("\\n"), 1)
+
+          health_marker = '    groq: !!secret(env, "GROQ_API_KEY", "GROQ_API"),'
+          if '    qwen: !!secret(env, "QWEN_API_KEY", "QWEN_API"),' not in s:
+              if health_marker not in s:
+                  raise SystemExit("health provider marker not found")
+              s = s.replace(health_marker, health_marker + '\n    qwen: !!secret(env, "QWEN_API_KEY", "QWEN_API"),', 1)
+
+          p.write_text(s, encoding="utf-8")
+
+      - name: Commit Worker patch
+        run: |
+          if git diff --quiet -- worker.js; then
+            echo "Qwen route already present"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add worker.js
+          git commit -m "fix: expose Qwen API route"
+          git push
