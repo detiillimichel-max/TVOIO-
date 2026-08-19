@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#070a0f">
-  <meta name="description" content="TV OIO — central de canais, vídeos e conteúdo por tema.">
+  <meta name="description" content="TV OIO — central de streaming, vídeos, música e descoberta.">
   <title>TV OIO — Central de Streaming</title>
   <link rel="stylesheet" href="./css/style.css">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -19,13 +19,16 @@
           <div class="brand-mark"><i data-lucide="tv" width="21" height="21"></i></div>
           <div><div class="brand-title">TV OIO</div><div class="brand-subtitle">Central de Streaming</div></div>
         </div>
+
         <form class="search" id="search-form" role="search">
           <span class="search-icon"><i data-lucide="search" width="18" height="18"></i></span>
-          <input id="search-input" type="search" autocomplete="off" placeholder="Buscar vídeos, programas, notícias…" aria-label="Buscar conteúdo">
+          <input id="search-input" type="search" autocomplete="off" placeholder="Buscar vídeos, músicas, filmes…" aria-label="Buscar conteúdo">
           <button class="search-clear" id="search-clear" type="button" aria-label="Limpar busca">×</button>
         </form>
+
         <div class="status-pill" id="api-status"><span class="status-dot"></span>Verificando API…</div>
       </div>
+
       <nav class="nav" aria-label="Canais">
         <button class="nav-btn active" data-channel="globo" type="button"><i data-lucide="play-circle" width="17"></i>Globo</button>
         <button class="nav-btn" data-channel="band" type="button"><i data-lucide="video" width="17"></i>Band</button>
@@ -39,11 +42,11 @@
       <section class="hero">
         <div>
           <div class="eyebrow"><i data-lucide="sparkles" width="14"></i> TV OIO</div>
-          <h1>Um lugar para descobrir o que assistir.</h1>
-          <p>Escolha um canal ou pesquise diretamente. O frontend usa o gateway seguro do OIO TV para buscar conteúdo sem expor chaves de API no navegador.</p>
+          <h1>Vídeos, música e conteúdo em um só lugar.</h1>
+          <p>Pesquise pelo gateway seguro do OIO TV. As chaves ficam no Cloudflare Worker; o navegador recebe somente os resultados necessários.</p>
           <div class="hero-actions">
-            <button class="primary" type="button" onclick="document.getElementById('search-input').focus()"><i data-lucide="search" width="17"></i>Começar uma busca</button>
-            <button class="secondary" type="button" onclick="window.carregarCanal('globo')"><i data-lucide="play" width="17"></i>Explorar Globo</button>
+            <button class="primary" type="button" onclick="document.getElementById('search-input').focus()"><i data-lucide="search" width="17"></i>Pesquisar agora</button>
+            <button class="secondary" type="button" onclick="window.carregarCanal('globo')"><i data-lucide="play" width="17"></i>Explorar canais</button>
           </div>
         </div>
         <div class="hero-side">
@@ -54,8 +57,23 @@
         </div>
       </section>
 
+      <section class="discovery-panel" aria-label="Busca por plataforma">
+        <div class="section-title compact">
+          <div><h2>Descobrir conteúdo</h2><p>Escolha a fonte e pesquise sem sair do TV OIO.</p></div>
+        </div>
+        <div class="provider-tabs" id="provider-tabs">
+          <button class="provider-tab active" data-provider="youtube" type="button"><i data-lucide="youtube" width="16"></i>YouTube</button>
+          <button class="provider-tab" data-provider="vimeo" type="button"><i data-lucide="video" width="16"></i>Vimeo</button>
+          <button class="provider-tab" data-provider="spotify" type="button"><i data-lucide="music-2" width="16"></i>Spotify</button>
+          <button class="provider-tab" data-provider="pexels" type="button"><i data-lucide="image" width="16"></i>Pexels</button>
+          <button class="provider-tab" data-provider="pixabay" type="button"><i data-lucide="images" width="16"></i>Pixabay</button>
+          <button class="provider-tab" data-provider="tmdb" type="button"><i data-lucide="clapperboard" width="16"></i>Filmes</button>
+          <button class="provider-tab" data-provider="nasa" type="button"><i data-lucide="orbit" width="16"></i>NASA</button>
+        </div>
+      </section>
+
       <section class="search-results" id="search-results" aria-live="polite">
-        <div class="section-title"><div><h2>Resultados da busca</h2><p>Vídeos encontrados pelo gateway OIO TV.</p></div></div>
+        <div class="section-title"><div><h2 id="results-title">Resultados</h2><p id="results-subtitle">Resultados retornados pelo gateway OIO TV.</p></div></div>
         <div class="result-grid" id="result-grid"></div>
       </section>
 
@@ -64,7 +82,17 @@
         <div id="app-container"><div class="loading-msg">Abrindo Globo…</div></div>
       </section>
     </main>
-    <footer>TV OIO · Frontend GitHub Pages · APIs protegidas pelo Cloudflare Worker</footer>
+
+    <footer>TV OIO · GitHub Pages · APIs protegidas pelo Cloudflare Worker</footer>
+  </div>
+
+  <div class="player-modal" id="player-modal" aria-hidden="true">
+    <div class="player-backdrop" data-close-player></div>
+    <div class="player-dialog" role="dialog" aria-modal="true" aria-labelledby="player-title">
+      <button class="player-close" type="button" data-close-player aria-label="Fechar player">×</button>
+      <div class="player-frame" id="player-frame"></div>
+      <div class="player-info"><h2 id="player-title">Reproduzindo</h2><p id="player-meta"></p></div>
+    </div>
   </div>
 
   <script type="module">
