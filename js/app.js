@@ -1,7 +1,7 @@
 const CONFIG = window.TVOIO_CONFIG || {};
 const API = String(CONFIG.apiBaseUrl || "").replace(/\/$/, "");
 
-const esc = (value = "") => String(value).replace(/[&<>\"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+const esc = (value = "") => String(value).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
 
 function icon(name, size = 17) {
   return `<i data-lucide="${esc(name)}" width="${size}" height="${size}"></i>`;
