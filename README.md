@@ -1,3 +1,2 @@
-TV OIO — Central de Streaming
-
-Canonical repository: detiillimichel-max/TVOIO-
+nso pedi isso 
+não faça sem eu pedi 
