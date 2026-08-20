@@ -228,6 +228,32 @@ async function vimeo(url, env) {
   return json(await upstream(endpoint, { headers: { Authorization: `Bearer ${token}` } }));
 }
 
+async function twitchAppToken(env) {
+  const clientId = requiredSecret(env, "TWITCH_CLIENT_ID", "TWITCH_ID");
+  const accessToken = secret(env, "TWITCH_ACCESS_TOKEN", "TWITCH_TOKEN");
+  if (accessToken) return { clientId, accessToken };
+  const clientSecret = secret(env, "TWITCH_CLIENT_SECRET", "TWITCH_SECRET");
+  if (!clientSecret) throw new Error("Twitch precisa de TWITCH_ACCESS_TOKEN ou TWITCH_CLIENT_SECRET no Cloudflare Worker.");
+  const endpoint = new URL("https://id.twitch.tv/oauth2/token");
+  endpoint.searchParams.set("client_id", clientId);
+  endpoint.searchParams.set("client_secret", clientSecret);
+  endpoint.searchParams.set("grant_type", "client_credentials");
+  const data = await upstream(endpoint, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" } });
+  return { clientId, accessToken: data.access_token };
+}
+
+async function twitch(url, env) {
+  const q = queryParam(url, "q");
+  if (!q) return error("Informe q para buscar canais/streams Twitch.");
+  const { clientId, accessToken } = await twitchAppToken(env);
+  const endpoint = new URL("https://api.twitch.tv/helix/search/channels");
+  endpoint.searchParams.set("query", q);
+  endpoint.searchParams.set("first", String(limitParam(url, 12, 100)));
+  return json(await upstream(endpoint, {
+    headers: { "Client-Id": clientId, Authorization: `Bearer ${accessToken}` },
+  }));
+}
+
 async function elevenlabs(url, env) {
   const key = requiredSecret(env, "ELEVENLABS_API_KEY", "ELEVENLABS_API", "ELEVENLABS");
   const text = queryParam(url, "text");
@@ -299,7 +325,7 @@ function health(env) {
   const providers = {
     youtube: !!secret(env, "YOUTUBE_API_KEY", "YOUTUBE_API", "YOUTUBE"),
     tmdb: !!secret(env, "TMDB_API_KEY", "TMDB_AF", "TMDB_API"),
-    twitch: !!secret(env, "TWITCH_CLIENT_ID", "TWITCH_ID"),
+    twitch: !!secret(env, "TWITCH_CLIENT_ID", "TWITCH_ID") && (!!secret(env, "TWITCH_ACCESS_TOKEN", "TWITCH_TOKEN") || !!secret(env, "TWITCH_CLIENT_SECRET", "TWITCH_SECRET")),
     vimeo: !!secret(env, "VIMEO_ACCESS_TOKEN", "VIMEO_API_KEY", "VIMEO_API"),
     pexels: !!secret(env, "PEXELS_API_KEY", "PEXELS_API"),
     pixabay: !!secret(env, "PIXABAY_API_KEY", "PIXABAY_API"),
@@ -336,6 +362,7 @@ export default {
       if (url.pathname === "/openmeteo/weather") return await openMeteo(url);
       if (url.pathname === "/spotify/search") return await spotify(url, env);
       if (url.pathname === "/vimeo/search") return await vimeo(url, env);
+      if (url.pathname === "/twitch/search") return await twitch(url, env);
       if (url.pathname === "/elevenlabs/tts") return await elevenlabs(url, env);
       if (url.pathname === "/ai/gemini") return await gemini(url, env, request);
       if (url.pathname === "/ai/groq") return await groq(url, env, request);
