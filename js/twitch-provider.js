@@ -90,12 +90,19 @@
       });
     } catch (error) {
       const status = Number(error?.status || 0);
-      if (status === 401 || status === 403) {
+      const message = String(error?.message || '');
+      if (/TWITCH_CLIENT_(ID|SECRET)/i.test(message)) {
+        renderMessage(
+          area,
+          'Secrets do Twitch cadastrados no Cloudflare.',
+          'O frontend está sem chaves, como deve ser. O Worker de produção ainda não está lendo os bindings TWITCH_CLIENT_ID / TWITCH_CLIENT_SECRET. Faça o deploy da versão do Worker que usa esses Secrets e tente novamente.'
+        );
+      } else if (status === 401 || status === 403) {
         renderMessage(area, 'O Twitch recusou a autenticação.', 'O Worker recebeu a requisição, mas as credenciais do Twitch foram recusadas.');
       } else if (status >= 400) {
-        renderMessage(area, 'O gateway recusou a busca.', error?.message || `HTTP ${status}`);
+        renderMessage(area, 'O gateway recusou a busca.', message || `HTTP ${status}`);
       } else {
-        renderMessage(area, 'Não foi possível conectar ao Twitch.', error?.message || 'Verifique se o gateway OIO TV está online.');
+        renderMessage(area, 'Não foi possível conectar ao Twitch.', message || 'Verifique se o gateway OIO TV está online.');
       }
       console.error('TV OIO Twitch', error);
     }
