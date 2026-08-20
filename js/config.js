@@ -3,6 +3,6 @@
 // As credenciais permanecem protegidas no Cloudflare Worker.
 
 window.TVOIO_CONFIG = Object.freeze({
-  // Gateway seguro do backend OIO TV.
-  apiBaseUrl: "https://oio-tv-api.detiillimichel.workers.dev"
+  // Gateway de produção do backend OIO TV.
+  apiBaseUrl: "https://tvoio.detiillimichel.workers.dev"
 });
