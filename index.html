@@ -8,6 +8,7 @@
   <title>TV OIO — Central de Streaming</title>
   <link rel="stylesheet" href="./css/style.css">
   <link rel="stylesheet" href="./css/audio-home.css">
+  <link rel="stylesheet" href="./css/twitch.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="./js/config.js"></script>
   <script src="./js/app.js"></script>
@@ -73,6 +74,17 @@
         </div>
       </section>
 
+      <section class="twitch-panel" aria-label="Vídeos Twitch">
+        <div class="twitch-panel-head">
+          <div><p class="twitch-kicker">Twitch · Vídeos e transmissões</p><h2>Descobrir no Twitch</h2><p>Busca pelo gateway do OIO TV, sem colocar credenciais no frontend.</p></div>
+        </div>
+        <form id="twitch-search-form" class="twitch-search" role="search">
+          <input id="twitch-search-input" type="search" autocomplete="off" value="twitch" placeholder="Buscar canal ou tema no Twitch…" aria-label="Buscar no Twitch">
+          <button type="submit">Buscar</button>
+        </form>
+        <div id="twitch-results" class="twitch-results" aria-live="polite"><div class="loading-msg">Conectando ao Twitch…</div></div>
+      </section>
+
       <section class="search-results" id="search-results" aria-live="polite">
         <div class="section-title"><div><h2 id="results-title">Resultados</h2><p id="results-subtitle">Resultados retornados pelo gateway OIO TV.</p></div></div>
         <div class="result-grid" id="result-grid"></div>
@@ -121,6 +133,7 @@
 
   <script src="./js/audio-home.js"></script>
   <script src="./js/audius-provider.js"></script>
+  <script src="./js/twitch-provider.js"></script>
   <script type="module">
     import { carregarGlobo } from './js/globo.js';
     import { carregarBand } from './js/band.js';
