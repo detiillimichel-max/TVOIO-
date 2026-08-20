@@ -7,6 +7,7 @@
   <meta name="description" content="TV OIO — central de streaming, vídeos, música e descoberta.">
   <title>TV OIO — Central de Streaming</title>
   <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/audio-home.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="./js/config.js"></script>
   <script src="./js/app.js"></script>
@@ -77,6 +78,29 @@
         <div class="result-grid" id="result-grid"></div>
       </section>
 
+      <section id="audio-home" aria-label="Música no TV OIO">
+        <div class="section-title"><div><h2>🎵 Música no TV OIO</h2><p>Descubra faixas do Audius e reproduza sem sair do aplicativo.</p></div></div>
+        <div class="audio-home-shell">
+          <div class="audio-home-head">
+            <div><p class="audio-home-kicker">Audius · Áudio</p><h2>Ouça agora</h2><p>O frontend não recebe nenhuma chave. Quando disponível, a busca passa pelo Cloudflare Worker.</p></div>
+            <div id="audio-home-status" class="audio-home-status loading">Conectando ao áudio…</div>
+          </div>
+          <form id="audio-home-search" class="audio-home-search" role="search">
+            <input id="audio-home-query" type="search" autocomplete="off" placeholder="Buscar artista, faixa ou gênero…" aria-label="Buscar música">
+            <button type="submit">Buscar</button>
+          </form>
+          <div id="audio-home-message" class="audio-home-message" hidden></div>
+          <div id="audio-home-tracks" class="audio-home-tracks" aria-live="polite"><div class="audio-home-loading">Carregando músicas…</div></div>
+          <div class="audio-home-player" aria-label="Player de áudio">
+            <div id="audio-home-art" class="audio-home-art">♫</div>
+            <div class="audio-home-player-meta"><strong id="audio-home-title">Nada tocando</strong><span id="audio-home-artist">Escolha uma faixa</span></div>
+            <button id="audio-home-toggle" class="audio-home-toggle" type="button" aria-label="Reproduzir">▶</button>
+            <input id="audio-home-volume" type="range" min="0" max="1" step="0.05" value="0.9" aria-label="Volume">
+            <audio id="audio-home-player" preload="none"></audio>
+          </div>
+        </div>
+      </section>
+
       <section>
         <div class="section-title"><div><h2>Agora no TV OIO</h2><p>Conteúdo organizado por canal e categoria.</p></div></div>
         <div id="app-container"><div class="loading-msg">Abrindo Globo…</div></div>
@@ -95,6 +119,7 @@
     </div>
   </div>
 
+  <script src="./js/audio-home.js"></script>
   <script type="module">
     import { carregarGlobo } from './js/globo.js';
     import { carregarBand } from './js/band.js';
