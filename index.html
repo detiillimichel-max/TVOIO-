@@ -78,6 +78,11 @@
         <div class="twitch-panel-head">
           <div><p class="twitch-kicker">Twitch · Vídeos e transmissões</p><h2>Descobrir no Twitch</h2><p>Busca pelo gateway do OIO TV, sem colocar credenciais no frontend.</p></div>
         </div>
+        <div class="twitch-credentials-status" aria-label="Credenciais Twitch configuradas no Cloudflare">
+          <span><i data-lucide="check-circle-2" width="15"></i>TWITCH_CLIENT_ID</span>
+          <span><i data-lucide="check-circle-2" width="15"></i>TWITCH_CLIENT_SECRET</span>
+          <small>Secrets protegidos no Cloudflare Worker</small>
+        </div>
         <form id="twitch-search-form" class="twitch-search" role="search">
           <input id="twitch-search-input" type="search" autocomplete="off" value="twitch" placeholder="Buscar canal ou tema no Twitch…" aria-label="Buscar no Twitch">
           <button type="submit">Buscar</button>
