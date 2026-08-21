@@ -7,6 +7,7 @@
   <meta name="description" content="TV OIO — central de streaming, vídeos, música e descoberta.">
   <title>TV OIO — Central de Streaming</title>
   <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/netflix-oio.css">
   <link rel="stylesheet" href="./css/audio-home.css">
   <link rel="stylesheet" href="./css/twitch.css">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -43,12 +44,12 @@
     <main>
       <section class="hero">
         <div>
-          <div class="eyebrow"><i data-lucide="sparkles" width="14"></i> TV OIO</div>
+          <div class="eyebrow"><i data-lucide="sparkles" width="14"></i> TV OIO · DESTAQUE</div>
           <h1>Vídeos, música e conteúdo em um só lugar.</h1>
-          <p>Pesquise pelo gateway seguro do OIO TV. As chaves ficam no Cloudflare Worker; o navegador recebe somente os resultados necessários.</p>
+          <p>Uma experiência de streaming cinematográfica, com filmes, séries, desenhos, esportes, documentários, clássicos e música.</p>
           <div class="hero-actions">
-            <button class="primary" type="button" onclick="document.getElementById('search-input').focus()"><i data-lucide="search" width="17"></i>Pesquisar agora</button>
-            <button class="secondary" type="button" onclick="window.carregarCanal('globo')"><i data-lucide="play" width="17"></i>Explorar canais</button>
+            <button class="primary" type="button" onclick="document.getElementById('search-input').focus()"><i data-lucide="play" width="17"></i>Assistir</button>
+            <button class="secondary" type="button" onclick="window.carregarCanal('globo')"><i data-lucide="info" width="17"></i>Detalhes</button>
           </div>
         </div>
         <div class="hero-side">
@@ -91,7 +92,7 @@
       </section>
 
       <section id="audio-home" aria-label="Música no TV OIO">
-        <div class="section-title"><div><h2>🎵 Música no TV OIO</h2><p>Descubra faixas do Audius e reproduza sem sair do aplicativo.</p></div></div>
+        <div class="section-title"><div><h2>🎵 Música no TV OIO</h2><p>Descubra faixas do Audius em carrossel e reproduza sem sair do aplicativo.</p></div></div>
         <div class="audio-home-shell">
           <div class="audio-home-head">
             <div><p class="audio-home-kicker">Audius · Áudio</p><h2>Ouça agora</h2><p>O frontend não recebe nenhuma chave. Quando disponível, a busca passa pelo Cloudflare Worker.</p></div>
