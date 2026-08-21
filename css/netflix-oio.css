@@ -1,0 +1,265 @@
+/* TV OIO — camada visual inspirada em streaming/cinema. Não altera a lógica das APIs. */
+
+:root {
+  --oio-bg: #050607;
+  --oio-panel: #101318;
+  --oio-line: rgba(255,255,255,.10);
+  --oio-text: #f5f7fa;
+  --oio-muted: #9aa1ad;
+  --oio-red: #e50914;
+}
+
+body { background: var(--oio-bg); }
+.app-shell { background: #050607; }
+
+/* Cabeçalho mais próximo de uma plataforma de streaming */
+.topbar {
+  background: rgba(5,6,7,.96);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.topbar-inner { max-width: 1440px; padding: 12px 24px; }
+.brand-mark {
+  background: var(--oio-red);
+  box-shadow: 0 8px 28px rgba(229,9,20,.24);
+}
+.brand-title { font-size: 19px; letter-spacing: -.02em; }
+.brand-subtitle { color: #8d929b; }
+
+/* Busca vira compacta no estilo de app de streaming e expande ao tocar */
+.search { max-width: 390px; transition: max-width .2s ease; }
+.search input {
+  height: 40px;
+  border-radius: 10px;
+  background: #111318;
+  border-color: rgba(255,255,255,.08);
+}
+.search:focus-within { max-width: 560px; }
+
+.status-pill { background:#0d0f12; border-color:rgba(255,255,255,.08); }
+
+.nav {
+  max-width: 1440px;
+  padding: 8px 24px 12px;
+  gap: 8px;
+}
+.nav-btn {
+  border-radius: 8px;
+  background: #111318;
+  border-color: rgba(255,255,255,.08);
+}
+.nav-btn.active {
+  background: var(--oio-red);
+  border-color: var(--oio-red);
+  box-shadow: 0 8px 24px rgba(229,9,20,.20);
+}
+
+main { max-width: 1440px; padding: 0 24px 70px; }
+
+/* Hero cinematográfico */
+.hero {
+  position: relative;
+  min-height: min(70vh, 650px);
+  margin: 0 -24px;
+  padding: clamp(150px, 28vh, 260px) 7% 70px;
+  display: flex;
+  align-items: flex-end;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.96) 0%, rgba(0,0,0,.68) 42%, rgba(0,0,0,.16) 78%),
+    linear-gradient(0deg, #050607 0%, rgba(5,6,7,.10) 45%, rgba(5,6,7,.05) 100%),
+    url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1800&q=82') center/cover no-repeat;
+  box-shadow: none;
+}
+.hero::after {
+  content:"";
+  position:absolute;
+  inset:auto 0 0;
+  height:34%;
+  background: linear-gradient(transparent,#050607);
+  pointer-events:none;
+}
+.hero > div:first-child { position:relative; z-index:1; max-width:680px; }
+.hero-side { display:none; }
+.eyebrow { color:#fff; }
+.hero h1 {
+  max-width:760px;
+  font-size: clamp(34px, 6vw, 64px);
+  text-shadow: 0 4px 25px rgba(0,0,0,.65);
+}
+.hero p { color:#d0d4da; max-width:620px; }
+.hero-actions { margin-top:24px; }
+.primary {
+  background:#fff;
+  color:#08090b;
+  border-color:#fff;
+  font-weight:800;
+}
+.primary:hover { background:#e8e8e8; }
+.secondary {
+  background:rgba(70,70,70,.80);
+  border-color:rgba(255,255,255,.14);
+  color:#fff;
+}
+
+/* Seções: menos caixas, mais catálogo */
+.section-title { margin: 34px 0 14px; }
+.section-title h2 { font-size: 22px; letter-spacing:-.02em; }
+.section-title p { color:#777e89; }
+.discovery-panel,
+.twitch-panel,
+.audio-home-shell {
+  border-color: var(--oio-line);
+  background:#0b0d10;
+  border-radius:16px;
+}
+
+/* Carrosséis de conteúdo */
+.carrossel-horizontal {
+  display:flex !important;
+  grid-auto-flow:unset;
+  grid-auto-columns:unset;
+  overflow-x:auto !important;
+  scroll-snap-type:x proximity;
+  gap:14px;
+  padding:2px 2px 14px !important;
+  scrollbar-width:none;
+}
+.carrossel-horizontal::-webkit-scrollbar { display:none; }
+.carrossel-horizontal > * {
+  flex:0 0 220px;
+  scroll-snap-align:start;
+}
+.card-video,
+.result-card {
+  background:#111318;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;
+}
+.card-video:hover,
+.result-card:hover { transform:scale(1.025); border-color:rgba(255,255,255,.16); }
+.thumbnail-wrapper,
+.result-card>img { aspect-ratio:16/9; }
+.card-video p { font-size:14px; font-weight:700; padding-top:10px; }
+.card-video small { padding-bottom:12px; }
+
+/* Música: carrossel visual de capas, em vez de lista vertical */
+#audio-home { margin-top:34px; }
+#audio-home > .section-title h2 { font-size:23px; }
+.audio-home-shell {
+  padding:0;
+  background:transparent;
+  border:0;
+  box-shadow:none;
+}
+.audio-home-head {
+  padding:0 0 10px;
+  margin:0;
+}
+.audio-home-head h2,
+.audio-home-head p:not(.audio-home-kicker),
+.audio-home-search,
+.audio-home-message { display:none; }
+.audio-home-kicker {
+  color:#a7adb7;
+  font-size:.75rem;
+}
+.audio-home-status { margin-left:auto; }
+.audio-home-tracks {
+  display:flex !important;
+  overflow-x:auto;
+  gap:14px;
+  padding:2px 2px 16px;
+  scroll-snap-type:x proximity;
+  scrollbar-width:none;
+}
+.audio-home-tracks::-webkit-scrollbar { display:none; }
+.audio-home-card {
+  position:relative;
+  flex:0 0 185px;
+  display:block;
+  padding:0 0 12px;
+  overflow:hidden;
+  scroll-snap-align:start;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:9px;
+  background:#111318;
+}
+.audio-home-card img {
+  display:block;
+  width:100%;
+  height:185px;
+  border-radius:0;
+  object-fit:cover;
+}
+.audio-home-card-body { padding:10px 11px 0; gap:3px; }
+.audio-home-card-body strong { font-size:.86rem; }
+.audio-home-card-body span { font-size:.73rem; }
+.audio-home-play {
+  position:absolute;
+  right:10px;
+  top:145px;
+  width:38px;
+  height:38px;
+  background:#fff;
+  color:#08090b;
+  box-shadow:0 5px 18px rgba(0,0,0,.45);
+}
+.audio-home-player {
+  margin-top:2px;
+  background:rgba(17,19,24,.96);
+  border-color:rgba(255,255,255,.10);
+}
+
+/* Resultados e Twitch também assumem formato de catálogo */
+.result-grid,
+.twitch-results {
+  display:flex !important;
+  overflow-x:auto;
+  gap:14px;
+  padding-bottom:14px;
+  scrollbar-width:none;
+}
+.result-grid::-webkit-scrollbar,
+.twitch-results::-webkit-scrollbar { display:none; }
+.result-grid > *,
+.twitch-results > * { flex:0 0 220px; }
+
+/* Espaçamento mobile e cartões maiores, como no exemplo enviado */
+@media (max-width: 700px) {
+  .topbar-inner { padding:10px 14px; }
+  .brand-subtitle { display:none; }
+  .status-pill { order:initial; width:auto; }
+  .search { order:initial; flex:1; max-width:48px; }
+  .search input {
+    opacity:0;
+    pointer-events:none;
+    padding-left:40px;
+  }
+  .search:focus-within { max-width:100%; }
+  .search:focus-within input { opacity:1; pointer-events:auto; }
+  .nav { padding:7px 14px 10px; }
+  main { padding:0 14px 72px; }
+  .hero {
+    min-height:68vh;
+    margin:0 -14px;
+    padding:150px 24px 52px;
+  }
+  .hero h1 { font-size:34px; }
+  .hero p { font-size:14px; line-height:1.45; }
+  .hero-actions .primary,
+  .hero-actions .secondary { padding:10px 13px; }
+  .section-title h2 { font-size:20px; }
+  .carrossel-horizontal > * { flex-basis:74vw; }
+  .audio-home-card { flex-basis:48vw; }
+  .audio-home-card img { height:48vw; }
+  .audio-home-play { top:calc(48vw - 40px); }
+  .result-grid > *, .twitch-results > * { flex-basis:70vw; }
+}
+
+@media (max-width:420px) {
+  .audio-home-card { flex-basis:58vw; }
+  .audio-home-card img { height:58vw; }
+  .audio-home-play { top:calc(58vw - 40px); }
+}
