@@ -1,37 +1,89 @@
 (() => {
-  const WORKER = String((window.TVOIO_CONFIG && window.TVOIO_CONFIG.apiBaseUrl) || "https://oio-tv-api.detiillimichel.workers.dev").replace(/\/$/, "");
   const AUDIUS = "https://discoveryprovider.audius.co/v1";
   const JAMENDO = "https://api.jamendo.com/v3.0/tracks/";
-  const JAMENDO_CLIENT_ID = String(window.TVOIO_CONFIG?.jamendoClientId || "709fa152");
+  // Client ID público de teste oficial do Jamendo. Para produção, usar o seu client_id via Worker.
+  const JAMENDO_CLIENT_ID = "709fa152";
   const $ = id => document.getElementById(id);
   const audio = $("audio-home-player");
-  const state = { source: "audius", tracks: [], current: null };
+  const state = { current: null, source: null };
+
   const esc = value => String(value ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const artwork = track => track?.artwork?.["480x480"] || track?.artwork?.["1000x1000"] || track?.artwork?.["150x150"] || track?.image || track?.album_image || "";
   const artist = track => track?.user?.name || track?.user?.handle || track?.artist_name || track?.artist || "Artista";
-  const status = (kind,text) => { const el=$("audio-home-status"); if(el){el.className=`audio-home-status ${kind||""}`;el.textContent=text;} };
-  const message = (text="",error=false) => { const el=$("audio-home-message"); if(!el)return; el.hidden=!text; el.className=`audio-home-message${error?" error":""}`; el.textContent=text; };
-  async function json(url){const response=await fetch(url,{headers:{Accept:"application/json"}});const text=await response.text();let data=null;try{data=text?JSON.parse(text):null;}catch{}if(!response.ok)throw new Error(data?.error?.message||data?.error_description||data?.message||data?.error||`HTTP ${response.status}`);return data;}
-  function normalizeAudius(data){return Array.isArray(data?.data)?data.data:Array.isArray(data)?data:[];}
-  function normalizeJamendo(data){return Array.isArray(data?.results)?data.results:[];}
-  async function loadAudius(query=""){
-    const url=query?`${AUDIUS}/tracks/search?${new URLSearchParams({query,limit:"12",app_name:"TV_OIO"})}`:`${AUDIUS}/tracks/trending?${new URLSearchParams({limit:"12",app_name:"TV_OIO"})}`;
-    try{const data=normalizeAudius(await json(url));if(!data.length)throw new Error("Audius não retornou faixas.");state.source="audius";state.tracks=data;status("ok",`Audius · ${data.length} faixas`);render();}
-    catch(error){state.tracks=[];status("bad","Audius indisponível");message(`Audius: ${error.message}`,true);render();}
+
+  function setStatus(source, kind, text) {
+    const el = $(`${source}-status`); if (!el) return;
+    el.className = `audio-home-status ${kind || ""}`; el.textContent = text;
   }
-  async function loadJamendo(query=""){
-    const params=new URLSearchParams({client_id:JAMENDO_CLIENT_ID,format:"json",limit:"12",audioformat:"mp32",imagesize:"300",type:"single albumtrack"});
-    if(query)params.set("search",query);else params.set("featured","true");
-    try{const data=normalizeJamendo(await json(`${JAMENDO}?${params}`));if(!data.length)throw new Error("Jamendo não retornou faixas.");state.source="jamendo";state.tracks=data;status("ok",`Jamendo · ${data.length} faixas`);render();}
-    catch(error){state.tracks=[];status("bad","Jamendo indisponível");message(`Jamendo: ${error.message}`,true);render();}
+  function setMessage(source, text = "", error = false) {
+    const el = $(`${source}-message`); if (!el) return;
+    el.hidden = !text; el.className = `audio-home-message${error ? " error" : ""}`; el.textContent = text;
   }
-  function streamUrl(track){if(state.source==="jamendo")return track?.audio||"";const id=track?.id||track?.track_id;return id?`${AUDIUS}/tracks/${encodeURIComponent(id)}/stream?app_name=TV_OIO`:"";}
-  function render(){const root=$("audio-home-tracks");if(!root)return;if(!state.tracks.length){root.innerHTML='<div class="audio-home-empty">Nenhuma faixa encontrada.</div>';return;}root.innerHTML=state.tracks.map((track,index)=>{const title=track?.title||track?.name||"Faixa sem título";const who=artist(track);return `<article class="audio-home-card"><img src="${esc(artwork(track))}" alt="" loading="lazy"><div class="audio-home-card-body"><strong title="${esc(title)}">${esc(title)}</strong><span title="${esc(who)}">${esc(who)}</span></div><button class="audio-home-play" type="button" data-index="${index}" aria-label="Tocar ${esc(title)}">▶</button></article>`;}).join("");root.querySelectorAll(".audio-home-play").forEach(btn=>btn.addEventListener("click",()=>play(state.tracks[Number(btn.dataset.index)])));}
-  function play(track){const src=streamUrl(track);if(!src||!audio)return;state.current=track;const title=track?.title||track?.name||"Reproduzindo";$("audio-home-title").textContent=title;$("audio-home-artist").textContent=artist(track);const art=$("audio-home-art");if(art){const image=artwork(track);art.style.backgroundImage=image?`url("${image.replace(/\"/g,"")}")`:"";}audio.src=src;audio.play().then(()=>{if($("audio-home-toggle"))$("audio-home-toggle").textContent="❚❚";}).catch(()=>message("Toque novamente em ▶ para iniciar a música.",true));}
-  document.querySelectorAll("[data-music-source]").forEach(button=>button.addEventListener("click",()=>{document.querySelectorAll("[data-music-source]").forEach(b=>b.classList.remove("active"));button.classList.add("active");state.source=button.dataset.musicSource;if(state.source==="jamendo")loadJamendo();else loadAudius();}));
-  $("audio-home-search")?.addEventListener("submit",event=>{event.preventDefault();const q=$("audio-home-query")?.value.trim()||"";state.source==="jamendo"?loadJamendo(q):loadAudius(q);});
-  $("audio-home-toggle")?.addEventListener("click",()=>{if(!audio?.src)return;if(audio.paused)audio.play();else audio.pause();});
-  $("audio-home-volume")?.addEventListener("input",event=>{if(audio)audio.volume=Number(event.target.value);});
-  audio?.addEventListener("play",()=>{if($("audio-home-toggle"))$("audio-home-toggle").textContent="❚❚";});audio?.addEventListener("pause",()=>{if($("audio-home-toggle"))$("audio-home-toggle").textContent="▶";});audio?.addEventListener("ended",()=>{if($("audio-home-toggle"))$("audio-home-toggle").textContent="▶";});
-  window.TVOIOMusic={loadAudius,loadJamendo};if(audio)audio.volume=.9;loadAudius();
+  async function json(url) {
+    const response = await fetch(url, { headers: { Accept: "application/json" } });
+    const text = await response.text(); let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch {}
+    if (!response.ok) throw new Error(data?.error?.message || data?.error_description || data?.message || data?.error || `HTTP ${response.status}`);
+    return data;
+  }
+
+  function render(source, tracks) {
+    const root = $(`${source}-tracks`); if (!root) return;
+    if (!tracks.length) { root.innerHTML = '<div class="audio-home-empty">Nenhuma faixa encontrada.</div>'; return; }
+    root.innerHTML = tracks.map((track, index) => {
+      const title = track?.title || track?.name || "Faixa sem título";
+      return `<article class="audio-home-card"><img src="${esc(artwork(track))}" alt="" loading="lazy"><div class="audio-home-card-body"><strong title="${esc(title)}">${esc(title)}</strong><span title="${esc(artist(track))}">${esc(artist(track))}</span></div><button class="audio-home-play" type="button" data-source="${source}" data-index="${index}" aria-label="Tocar ${esc(title)}">▶</button></article>`;
+    }).join("");
+  }
+
+  async function loadAudius(query = "") {
+    const root = $("audius-tracks"); if (root) root.innerHTML = '<div class="audio-home-loading">Carregando Audius…</div>';
+    setStatus("audius", "loading", "Conectando…"); setMessage("audius");
+    const url = query ? `${AUDIUS}/tracks/search?${new URLSearchParams({ query, limit: "12", app_name: "TV_OIO" })}` : `${AUDIUS}/tracks/trending?${new URLSearchParams({ limit: "12", app_name: "TV_OIO" })}`;
+    try {
+      const data = await json(url); const tracks = Array.isArray(data?.data) ? data.data : [];
+      if (!tracks.length) throw new Error("Audius não retornou faixas.");
+      render("audius", tracks); setStatus("audius", "ok", `Audius · ${tracks.length} faixas`); window.TVOIO_MUSIC = window.TVOIO_MUSIC || {}; window.TVOIO_MUSIC.audius = tracks;
+    } catch (error) { render("audius", []); setStatus("audius", "bad", "Audius indisponível"); setMessage("audius", error.message, true); }
+  }
+
+  async function loadJamendo(query = "") {
+    const root = $("jamendo-tracks"); if (root) root.innerHTML = '<div class="audio-home-loading">Carregando Jamendo…</div>';
+    setStatus("jamendo", "loading", "Conectando…"); setMessage("jamendo");
+    const params = new URLSearchParams({ client_id: JAMENDO_CLIENT_ID, format: "json", limit: "12", audioformat: "mp32", imagesize: "300", type: "single albumtrack" });
+    if (query) params.set("search", query); else params.set("featured", "true");
+    try {
+      const data = await json(`${JAMENDO}?${params}`); const tracks = Array.isArray(data?.results) ? data.results : [];
+      if (!tracks.length) throw new Error("Jamendo não retornou faixas.");
+      render("jamendo", tracks); setStatus("jamendo", "ok", `Jamendo · ${tracks.length} faixas`); window.TVOIO_MUSIC = window.TVOIO_MUSIC || {}; window.TVOIO_MUSIC.jamendo = tracks;
+    } catch (error) { render("jamendo", []); setStatus("jamendo", "bad", "Jamendo indisponível"); setMessage("jamendo", error.message, true); }
+  }
+
+  function streamUrl(source, track) {
+    if (source === "jamendo") return track?.audio || track?.audiodownload || "";
+    const id = track?.id || track?.track_id; return id ? `${AUDIUS}/tracks/${encodeURIComponent(id)}/stream?app_name=TV_OIO` : "";
+  }
+  function play(source, track) {
+    const src = streamUrl(source, track); if (!src || !audio) return;
+    state.current = track; state.source = source;
+    $("audio-home-title").textContent = track?.title || track?.name || "Reproduzindo";
+    $("audio-home-artist").textContent = artist(track);
+    const art = $("audio-home-art"); const image = artwork(track); if (art) art.style.backgroundImage = image ? `url("${image.replace(/\"/g, "")}")` : "";
+    audio.src = src; audio.play().catch(() => setMessage(source, "Toque novamente em ▶ para iniciar a música.", true));
+  }
+
+  document.addEventListener("click", event => {
+    const button = event.target.closest(".audio-home-play[data-source]"); if (!button) return;
+    const source = button.dataset.source; const tracks = window.TVOIO_MUSIC?.[source] || []; play(source, tracks[Number(button.dataset.index)]);
+  });
+  $("audius-search")?.addEventListener("submit", e => { e.preventDefault(); loadAudius($("audius-query")?.value.trim() || ""); });
+  $("jamendo-search")?.addEventListener("submit", e => { e.preventDefault(); loadJamendo($("jamendo-query")?.value.trim() || ""); });
+  $("audio-home-toggle")?.addEventListener("click", () => { if (!audio?.src) return; if (audio.paused) audio.play(); else audio.pause(); });
+  $("audio-home-volume")?.addEventListener("input", e => { if (audio) audio.volume = Number(e.target.value); });
+  audio?.addEventListener("play", () => { if ($("audio-home-toggle")) $("audio-home-toggle").textContent = "❚❚"; });
+  audio?.addEventListener("pause", () => { if ($("audio-home-toggle")) $("audio-home-toggle").textContent = "▶"; });
+  audio?.addEventListener("ended", () => { if ($("audio-home-toggle")) $("audio-home-toggle").textContent = "▶"; });
+  if (audio) audio.volume = .9;
+  window.TVOIOMusic = { loadAudius, loadJamendo };
+  loadAudius(); loadJamendo();
 })();
