@@ -1,96 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#070a0f">
-  <meta name="description" content="TV OIO — central de streaming, vídeos, música e descoberta.">
-  <title>TV OIO — Central de Streaming</title>
-  <link rel="stylesheet" href="./css/style.css">
-  <link rel="stylesheet" href="./css/netflix-oio.css">
-  <link rel="stylesheet" href="./css/audio-home.css">
-  <link rel="stylesheet" href="./css/twitch.css">
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="./js/config.js"></script>
-  <script src="./js/app.js"></script>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="theme-color" content="#070a0f"><meta name="description" content="TV OIO — central de streaming, vídeos, música e descoberta."><title>TV OIO — Central de Streaming</title>
+  <link rel="stylesheet" href="./css/style.css"><link rel="stylesheet" href="./css/netflix-oio.css"><link rel="stylesheet" href="./css/audio-home.css"><link rel="stylesheet" href="./css/twitch.css"><script src="https://unpkg.com/lucide@latest"></script><script src="./js/config.js"></script><script src="./js/app.js"></script>
 </head>
 <body>
-  <div class="app-shell">
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand">
-          <div class="brand-mark"><i data-lucide="tv" width="21" height="21"></i></div>
-          <div><div class="brand-title">TV OIO</div><div class="brand-subtitle">Central de Streaming</div></div>
-        </div>
-        <form class="search" id="search-form" role="search">
-          <span class="search-icon"><i data-lucide="search" width="18" height="18"></i></span>
-          <input id="search-input" type="search" autocomplete="off" placeholder="Buscar vídeos, músicas, filmes…" aria-label="Buscar conteúdo">
-          <button class="search-clear" id="search-clear" type="button" aria-label="Limpar busca">×</button>
-        </form>
-        <div class="status-pill" id="api-status"><span class="status-dot"></span>Verificando API…</div>
-      </div>
-      <nav class="nav" aria-label="Canais">
-        <button class="nav-btn active" data-channel="globo" type="button"><i data-lucide="play-circle" width="17"></i>Globo</button>
-        <button class="nav-btn" data-channel="band" type="button"><i data-lucide="video" width="17"></i>Band</button>
-        <button class="nav-btn" data-channel="cultura" type="button"><i data-lucide="book-open" width="17"></i>Cultura</button>
-        <button class="nav-btn" data-channel="tvescola" type="button"><i data-lucide="graduation-cap" width="17"></i>TV Escola</button>
-        <button class="nav-btn" data-channel="canalfuturalive" type="button"><i data-lucide="globe-2" width="17"></i>Canal Futura</button>
-      </nav>
-    </header>
-    <main>
-      <section class="hero">
-        <div>
-          <div class="eyebrow"><i data-lucide="sparkles" width="14"></i> TV OIO · DESTAQUE</div>
-          <h1>Vídeos, música e conteúdo em um só lugar.</h1>
-          <p>Uma experiência de streaming cinematográfica, com filmes, séries, desenhos, esportes, documentários, clássicos e música.</p>
-          <div class="hero-actions">
-            <button class="primary" type="button" onclick="document.getElementById('search-input').focus()"><i data-lucide="play" width="17"></i>Assistir</button>
-            <button class="secondary" type="button" onclick="window.carregarCanal('globo')"><i data-lucide="info" width="17"></i>Detalhes</button>
-          </div>
-        </div>
-        <div class="hero-side">
-          <div class="stat"><strong>5</strong><span>canais</span></div><div class="stat"><strong id="provider-count">—</strong><span>serviços ativos</span></div><div class="stat"><strong>API</strong><span>gateway seguro</span></div><div class="stat"><strong>0</strong><span>chaves no frontend</span></div>
-        </div>
-      </section>
-      <section class="discovery-panel" aria-label="Busca por plataforma">
-        <div class="section-title compact"><div><h2>Descobrir conteúdo</h2><p>Escolha a fonte e pesquise sem sair do TV OIO.</p></div></div>
-        <div class="provider-tabs" id="provider-tabs">
-          <button class="provider-tab active" data-provider="youtube" type="button"><i data-lucide="youtube" width="16"></i>YouTube</button><button class="provider-tab" data-provider="vimeo" type="button"><i data-lucide="video" width="16"></i>Vimeo</button><button class="provider-tab" data-provider="spotify" type="button"><i data-lucide="music-2" width="16"></i>Spotify</button><button class="provider-tab" data-provider="pexels" type="button"><i data-lucide="image" width="16"></i>Pexels</button><button class="provider-tab" data-provider="pixabay" type="button"><i data-lucide="images" width="16"></i>Pixabay</button><button class="provider-tab" data-provider="tmdb" type="button"><i data-lucide="clapperboard" width="16"></i>Filmes</button><button class="provider-tab" data-provider="nasa" type="button"><i data-lucide="orbit" width="16"></i>NASA</button>
-        </div>
-      </section>
-      <section class="twitch-panel" aria-label="Vídeos Twitch">
-        <div class="twitch-panel-head"><div><p class="twitch-kicker">Twitch · Vídeos e transmissões</p><h2>Descobrir no Twitch</h2><p>Busca pelo gateway do OIO TV, sem colocar credenciais no frontend.</p></div></div>
-        <form id="twitch-search-form" class="twitch-search" role="search"><input id="twitch-search-input" type="search" autocomplete="off" value="twitch" placeholder="Buscar canal ou tema no Twitch…" aria-label="Buscar no Twitch"><button type="submit">Buscar</button></form>
-        <div id="twitch-results" class="twitch-results" aria-live="polite"><div class="loading-msg">Conectando ao Twitch…</div></div>
-      </section>
-      <section class="search-results" id="search-results" aria-live="polite"><div class="section-title"><div><h2 id="results-title">Resultados</h2><p id="results-subtitle">Resultados retornados pelo gateway OIO TV.</p></div></div><div class="result-grid" id="result-grid"></div></section>
-      <section id="audio-home" aria-label="Música no TV OIO">
-        <div class="section-title"><div><h2>🎵 Música no TV OIO</h2><p>Carrossel de música com Audius e Jamendo.</p></div></div>
-        <div class="audio-source-tabs" role="tablist" aria-label="Fontes de música">
-          <button class="audio-source-tab active" data-music-source="audius" type="button">Audius</button>
-          <button class="audio-source-tab" data-music-source="jamendo" type="button">Jamendo</button>
-        </div>
-        <div class="audio-home-shell">
-          <div class="audio-home-head"><div><p class="audio-home-kicker">Música · Carrossel</p><h2>Ouça agora</h2></div><div id="audio-home-status" class="audio-home-status loading">Conectando ao áudio…</div></div>
-          <form id="audio-home-search" class="audio-home-search" role="search"><input id="audio-home-query" type="search" autocomplete="off" placeholder="Buscar artista, faixa ou gênero…" aria-label="Buscar música"><button type="submit">Buscar</button></form>
-          <div id="audio-home-message" class="audio-home-message" hidden></div>
-          <div id="audio-home-tracks" class="audio-home-tracks" aria-live="polite"><div class="audio-home-loading">Carregando músicas…</div></div>
-          <div class="audio-home-player" aria-label="Player de áudio"><div id="audio-home-art" class="audio-home-art">♫</div><div class="audio-home-player-meta"><strong id="audio-home-title">Nada tocando</strong><span id="audio-home-artist">Escolha uma faixa</span></div><button id="audio-home-toggle" class="audio-home-toggle" type="button" aria-label="Reproduzir">▶</button><input id="audio-home-volume" type="range" min="0" max="1" step="0.05" value="0.9" aria-label="Volume"><audio id="audio-home-player" preload="none"></audio></div>
-        </div>
-      </section>
-      <section><div class="section-title"><div><h2>Agora no TV OIO</h2><p>Conteúdo organizado por canal e categoria.</p></div></div><div id="app-container"><div class="loading-msg">Abrindo Globo…</div></div></section>
-    </main>
-    <footer>TV OIO · GitHub Pages · APIs protegidas pelo Cloudflare Worker</footer>
-  </div>
-  <div class="player-modal" id="player-modal" aria-hidden="true"><div class="player-backdrop" data-close-player></div><div class="player-dialog" role="dialog" aria-modal="true" aria-labelledby="player-title"><button class="player-close" type="button" data-close-player aria-label="Fechar player">×</button><div class="player-frame" id="player-frame"></div><div class="player-info"><h2 id="player-title">Reproduzindo</h2><p id="player-meta"></p></div></div></div>
-  <script src="./js/audio-home.js"></script><script src="./js/audius-provider.js"></script><script src="./js/twitch-provider.js"></script>
-  <script type="module">
-    import { carregarGlobo } from './js/globo.js';
-    import { carregarBand } from './js/band.js';
-    import { carregarCultura } from './js/cultura.js';
-    import { carregarTvEscola } from './js/tvescola.js';
-    import { carregarFutura } from './js/canalfuturalive.js';
-    window._channelLoaders.globo=carregarGlobo;window._channelLoaders.band=carregarBand;window._channelLoaders.cultura=carregarCultura;window._channelLoaders.tvescola=carregarTvEscola;window._channelLoaders.canalfuturalive=carregarFutura;window.carregarCanal('globo');if(window.lucide)window.lucide.createIcons();
-  </script>
-</body>
-</html>
+<div class="app-shell">
+<header class="topbar"><div class="topbar-inner"><div class="brand"><div class="brand-mark"><i data-lucide="tv" width="21" height="21"></i></div><div><div class="brand-title">TV OIO</div><div class="brand-subtitle">Central de Streaming</div></div></div><form class="search" id="search-form" role="search"><span class="search-icon"><i data-lucide="search" width="18" height="18"></i></span><input id="search-input" type="search" autocomplete="off" placeholder="Buscar vídeos, músicas, filmes…" aria-label="Buscar conteúdo"><button class="search-clear" id="search-clear" type="button" aria-label="Limpar busca">×</button></form><div class="status-pill" id="api-status"><span class="status-dot"></span>Verificando API…</div></div><nav class="nav" aria-label="Canais"><button class="nav-btn active" data-channel="globo" type="button"><i data-lucide="play-circle" width="17"></i>Globo</button><button class="nav-btn" data-channel="band" type="button"><i data-lucide="video" width="17"></i>Band</button><button class="nav-btn" data-channel="cultura" type="button"><i data-lucide="book-open" width="17"></i>Cultura</button><button class="nav-btn" data-channel="tvescola" type="button"><i data-lucide="graduation-cap" width="17"></i>TV Escola</button><button class="nav-btn" data-channel="canalfuturalive" type="button"><i data-lucide="globe-2" width="17"></i>Canal Futura</button></nav></header>
+<main>
+<section class="hero"><div><div class="eyebrow"><i data-lucide="sparkles" width="14"></i> TV OIO · DESTAQUE</div><h1>Vídeos, música e conteúdo em um só lugar.</h1><p>Uma experiência de streaming cinematográfica, com filmes, séries, desenhos, esportes, documentários, clássicos e música.</p><div class="hero-actions"><button class="primary" type="button" onclick="document.getElementById('search-input').focus()"><i data-lucide="play" width="17"></i>Assistir</button><button class="secondary" type="button" onclick="window.carregarCanal('globo')"><i data-lucide="info" width="17"></i>Detalhes</button></div></div><div class="hero-side"><div class="stat"><strong>5</strong><span>canais</span></div><div class="stat"><strong id="provider-count">—</strong><span>serviços ativos</span></div><div class="stat"><strong>API</strong><span>gateway seguro</span></div><div class="stat"><strong>0</strong><span>chaves no frontend</span></div></div></section>
+<section class="discovery-panel" aria-label="Busca por plataforma"><div class="section-title compact"><div><h2>Descobrir conteúdo</h2><p>Escolha a fonte e pesquise sem sair do TV OIO.</p></div></div><div class="provider-tabs" id="provider-tabs"><button class="provider-tab active" data-provider="youtube" type="button"><i data-lucide="youtube" width="16"></i>YouTube</button><button class="provider-tab" data-provider="vimeo" type="button"><i data-lucide="video" width="16"></i>Vimeo</button><button class="provider-tab" data-provider="spotify" type="button"><i data-lucide="music-2" width="16"></i>Spotify</button><button class="provider-tab" data-provider="pexels" type="button"><i data-lucide="image" width="16"></i>Pexels</button><button class="provider-tab" data-provider="pixabay" type="button"><i data-lucide="images" width="16"></i>Pixabay</button><button class="provider-tab" data-provider="tmdb" type="button"><i data-lucide="clapperboard" width="16"></i>Filmes</button><button class="provider-tab" data-provider="nasa" type="button"><i data-lucide="orbit" width="16"></i>NASA</button></div></section>
+<section class="twitch-panel" aria-label="Vídeos Twitch"><div class="twitch-panel-head"><div><p class="twitch-kicker">Twitch · Vídeos e transmissões</p><h2>Descobrir no Twitch</h2><p>Busca pelo gateway do OIO TV, sem colocar credenciais no frontend.</p></div></div><form id="twitch-search-form" class="twitch-search" role="search"><input id="twitch-search-input" type="search" autocomplete="off" value="twitch" placeholder="Buscar canal ou tema no Twitch…" aria-label="Buscar no Twitch"><button type="submit">Buscar</button></form><div id="twitch-results" class="twitch-results" aria-live="polite"><div class="loading-msg">Conectando ao Twitch…</div></div></section>
+<section class="search-results" id="search-results" aria-live="polite"><div class="section-title"><div><h2 id="results-title">Resultados</h2><p id="results-subtitle">Resultados retornados pelo gateway OIO TV.</p></div></div><div class="result-grid" id="result-grid"></div></section>
+<section id="audio-home" aria-label="Música no TV OIO"><div class="section-title"><div><h2>🎵 Música no TV OIO</h2><p>Cada serviço mantém sua própria fileira de carrossel.</p></div></div>
+<section class="music-row" aria-labelledby="audius-title"><div class="music-row-head"><div><p class="audio-home-kicker">Audius · Música</p><h2 id="audius-title">Audius</h2></div><div id="audius-status" class="audio-home-status loading">Conectando…</div></div><form id="audius-search" class="music-search" role="search"><input id="audius-query" type="search" autocomplete="off" placeholder="Buscar no Audius…" aria-label="Buscar no Audius"><button type="submit">Buscar</button></form><div id="audius-message" class="audio-home-message" hidden></div><div id="audius-tracks" class="music-carousel" aria-live="polite"><div class="audio-home-loading">Carregando Audius…</div></div></section>
+<section class="music-row" aria-labelledby="jamendo-title"><div class="music-row-head"><div><p class="audio-home-kicker">Jamendo · Música independente</p><h2 id="jamendo-title">Jamendo</h2></div><div id="jamendo-status" class="audio-home-status loading">Conectando…</div></div><form id="jamendo-search" class="music-search" role="search"><input id="jamendo-query" type="search" autocomplete="off" placeholder="Buscar no Jamendo…" aria-label="Buscar no Jamendo"><button type="submit">Buscar</button></form><div id="jamendo-message" class="audio-home-message" hidden></div><div id="jamendo-tracks" class="music-carousel" aria-live="polite"><div class="audio-home-loading">Carregando Jamendo…</div></div></section>
+<div class="audio-home-player" aria-label="Player de áudio"><div id="audio-home-art" class="audio-home-art">♫</div><div class="audio-home-player-meta"><strong id="audio-home-title">Nada tocando</strong><span id="audio-home-artist">Escolha uma faixa</span></div><button id="audio-home-toggle" class="audio-home-toggle" type="button" aria-label="Reproduzir">▶</button><input id="audio-home-volume" type="range" min="0" max="1" step="0.05" value="0.9" aria-label="Volume"><audio id="audio-home-player" preload="none"></audio></div></section>
+<section><div class="section-title"><div><h2>Agora no TV OIO</h2><p>Conteúdo organizado por canal e categoria.</p></div></div><div id="app-container"><div class="loading-msg">Abrindo Globo…</div></div></section>
+</main><footer>TV OIO · GitHub Pages · APIs protegidas pelo Cloudflare Worker</footer></div>
+<div class="player-modal" id="player-modal" aria-hidden="true"><div class="player-backdrop" data-close-player></div><div class="player-dialog" role="dialog" aria-modal="true" aria-labelledby="player-title"><button class="player-close" type="button" data-close-player aria-label="Fechar player">×</button><div class="player-frame" id="player-frame"></div><div class="player-info"><h2 id="player-title">Reproduzindo</h2><p id="player-meta"></p></div></div></div>
+<script src="./js/audio-home.js"></script><script src="./js/audius-provider.js"></script><script src="./js/twitch-provider.js"></script><script type="module">import { carregarGlobo } from './js/globo.js';import { carregarBand } from './js/band.js';import { carregarCultura } from './js/cultura.js';import { carregarTvEscola } from './js/tvescola.js';import { carregarFutura } from './js/canalfuturalive.js';window._channelLoaders.globo=carregarGlobo;window._channelLoaders.band=carregarBand;window._channelLoaders.cultura=carregarCultura;window._channelLoaders.tvescola=carregarTvEscola;window._channelLoaders.canalfuturalive=carregarFutura;window.carregarCanal('globo');if(window.lucide)window.lucide.createIcons();</script>
+</body></html>
