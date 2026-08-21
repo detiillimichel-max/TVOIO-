@@ -42,6 +42,7 @@ function openPlayer({ source, id, title, meta = "" }) {
   modal.classList.add("open"); modal.setAttribute("aria-hidden", "false"); document.body.classList.add("modal-open"); refreshIcons();
 }
 function closePlayer() { const modal = document.getElementById("player-modal"); if (!modal) return; modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); document.getElementById("player-frame").innerHTML = ""; document.body.classList.remove("modal-open"); }
+window.openPlayer = openPlayer;
 
 function renderYoutubeCard(item) {
   const videoId = item?.id?.videoId; if (!videoId) return "";
