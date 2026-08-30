@@ -1,4 +1,4 @@
-/* TV OIO — Descobrir > TV. Reproduz apenas pelo iframe oficial do YouTube. */
+/* TV OIO — Emissoras em cards no mesmo padrão visual do Audius. */
 (() => {
   const esc = (v = "") => String(v).replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const tvChannelsData = [
@@ -32,8 +32,12 @@
         <img class="tv-channel-logo" src="${esc(ch.logoUrl)}" alt="Logo ${esc(ch.name)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
         <div class="tv-channel-logo-fallback" hidden>${esc(initials(ch.name))}</div>
         <span class="tv-channel-live ${ready?"ready":"pending"}">${ready?"● AO VIVO":"YouTube"}</span>
+        <button class="tv-channel-play" type="button" aria-label="Abrir ${esc(ch.name)}">▶</button>
       </div>
-      <div class="tv-channel-body"><h3>${esc(ch.name)}</h3><small>${esc(ch.country)} · ${esc(ch.category)}</small></div>
+      <div class="tv-channel-body">
+        <strong>${esc(ch.name)}</strong>
+        <span>${esc(ch.country)} · ${esc(ch.category)}</span>
+      </div>
     </article>`;
   }
 
@@ -46,7 +50,7 @@
     if(!modal||!frame)return;
     document.getElementById("player-title").textContent=ch.name;
     document.getElementById("player-meta").textContent=`${ch.country} · ${ch.category}`;
-    frame.innerHTML=`<div class="external-player tv-channel-pending"><div class="tv-pending-icon">${esc(initials(ch.name))}</div><h3>Live atual não configurada</h3><p>O OIO não inventa IDs de transmissão. Use o canal oficial até o ID da live atual ser confirmado.</p><a href="${esc(ch.youtubeUrl)}" target="_blank" rel="noopener noreferrer">Abrir canal oficial no YouTube</a></div>`;
+    frame.innerHTML=`<div class="external-player tv-channel-pending"><div class="tv-pending-icon">${esc(initials(ch.name))}</div><h3>Live atual não configurada</h3><p>O OIO não inventa IDs de transmissão. Use o canal oficial até o ID da live ser confirmado.</p><a href="${esc(ch.youtubeUrl)}" target="_blank" rel="noopener noreferrer">Abrir canal oficial no YouTube</a></div>`;
     modal.classList.add("open"); modal.setAttribute("aria-hidden","false"); document.body.classList.add("modal-open");
   }
 
@@ -54,14 +58,15 @@
     root.querySelectorAll(".tv-channel-card").forEach(card=>{
       if(card.dataset.bound)return; card.dataset.bound="1";
       const ch=tvChannelsData.find(x=>x.id===card.dataset.tvId); if(!ch)return;
-      const open=()=>openChannel(ch); card.addEventListener("click",open);
+      const open=()=>openChannel(ch);
+      card.addEventListener("click",open);
       card.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open();}});
     });
   }
 
   function render() {
     const host=document.getElementById("tv-channels-home"); if(!host)return;
-    host.innerHTML=`<div class="section-title tv-section-title"><div><p class="youtube-home-kicker">Descobrir · TV</p><h2>📺 TV no YouTube</h2><p>Canais oficiais em cards horizontais, sem sair do TV OIO.</p></div></div><div class="tv-channel-track carrossel-horizontal">${tvChannelsData.map(renderCard).join("")}</div><p class="tv-channel-note">O OIO usa somente o player oficial do YouTube. Lives podem trocar de ID; quando o ID atual não estiver confirmado, o card aponta para o canal oficial.</p>`;
+    host.innerHTML=`<div class="section-title tv-section-title"><div><p class="youtube-home-kicker">TV · Emissoras</p><h2>📺 Emissoras</h2><p>Cada emissora segue o mesmo padrão visual dos cards do Audius.</p></div></div><div class="tv-channel-track">${tvChannelsData.map(renderCard).join("")}</div>`;
     bind(host);
   }
 
