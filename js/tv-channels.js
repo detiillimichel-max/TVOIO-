@@ -26,17 +26,15 @@
   const initials = name => String(name).split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase();
 
   function renderCard(ch) {
-    const ready = Boolean(ch.youtubeId);
     return `<article class="tv-channel-card" data-tv-id="${esc(ch.id)}" tabindex="0" role="button" aria-label="Abrir ${esc(ch.name)}">
       <div class="tv-channel-logo-wrap">
         <img class="tv-channel-logo" src="${esc(ch.logoUrl)}" alt="Logo ${esc(ch.name)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
         <div class="tv-channel-logo-fallback" hidden>${esc(initials(ch.name))}</div>
-        <span class="tv-channel-live ${ready?"ready":"pending"}">${ready?"● AO VIVO":"YouTube"}</span>
         <button class="tv-channel-play" type="button" aria-label="Abrir ${esc(ch.name)}">▶</button>
       </div>
       <div class="tv-channel-body">
-        <strong>${esc(ch.name)}</strong>
-        <span>${esc(ch.country)} · ${esc(ch.category)}</span>
+        <strong title="${esc(ch.name)}">${esc(ch.name)}</strong>
+        <span title="${esc(ch.country)} · ${esc(ch.category)}">${esc(ch.country)} · ${esc(ch.category)}</span>
       </div>
     </article>`;
   }
