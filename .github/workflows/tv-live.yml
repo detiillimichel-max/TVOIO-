@@ -1,0 +1,48 @@
+name: TV OIO — atualizar lives do YouTube
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Uma execução diária para a primeira versão segura.
+    # A frequência poderá ser refinada depois de validarmos o consumo.
+    - cron: "17 6 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tv-oio-live-update
+  cancel-in-progress: false
+
+jobs:
+  update-tv-lives:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Atualizar dados das lives
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: node scripts/update-tv-lives.mjs
+
+      - name: Publicar somente se houver alteração
+        run: |
+          if git diff --quiet -- data/tv-live-data.json; then
+            echo "Nenhuma alteração nos dados das lives."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/tv-live-data.json
+          git commit -m "chore: atualizar lives do YouTube"
+          git push
