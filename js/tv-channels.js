@@ -1,11 +1,18 @@
 /* TV OIO — Emissoras em cards no mesmo padrão visual do Audius. */
 (() => {
   const esc = (v = "") => String(v).replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+  const youtubeLiveId = (url = "") => {
+    const match = String(url).match(/(?:youtube\.com\/(?:live\/|watch\?v=)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+    return match ? match[1] : null;
+  };
+
   const tvChannelsData = [
     {id:"record-news-br",name:"Record News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:"/assets/logos/record-news.png",youtubeId:null,youtubeUrl:"https://www.youtube.com/@recordnews"},
     {id:"cnn-brasil",name:"CNN Brasil",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:"/assets/logos/cnn-brasil.png",youtubeId:null,youtubeUrl:"https://www.youtube.com/@cnnbrasil"},
     {id:"sbt-news",name:"SBT News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:"/assets/logos/sbt-news.png",youtubeId:"1m1_iNLn5UY",youtubeUrl:"https://www.youtube.com/@sbtnews"},
     {id:"tv-cultura",name:"TV Cultura",category:"Cultura e Infantil",country:"🇧🇷 Brasil",logoUrl:"/assets/logos/tv-cultura.png",youtubeId:null,youtubeUrl:"https://www.youtube.com/@TVCultura"},
+    {id:"band",name:"Band",category:"TV Aberta",country:"🇧🇷 Brasil",logoUrl:"/assets/logos/band.png",youtubeId:"s_WOpljDii8",youtubeUrl:"https://www.youtube.com/live/s_WOpljDii8?is=CiGWUYnxr3hLBgQ_"},
     {id:"cazetv",name:"CazéTV",category:"Esportes",country:"🇧🇷 Brasil",logoUrl:"/assets/logos/cazetv.png",youtubeId:null,youtubeUrl:"https://www.youtube.com/@CazeTV"},
     {id:"abc-news-us",name:"ABC News",category:"Notícias",country:"🇺🇸 EUA",logoUrl:"/assets/logos/abc-news.png",youtubeId:null,youtubeUrl:"https://www.youtube.com/@ABCNews"},
     {id:"nbc-news-us",name:"NBC News",category:"Notícias",country:"🇺🇸 EUA",logoUrl:"/assets/logos/nbc-news.png",youtubeId:null,youtubeUrl:"https://www.youtube.com/@NBCNews"},
@@ -40,15 +47,18 @@
   }
 
   function openChannel(ch) {
-    if (ch.youtubeId && typeof window.openPlayer === "function") {
-      window.openPlayer({source:"youtube",id:ch.youtubeId,title:ch.name,meta:`${ch.country} · ${ch.category} · YouTube oficial`});
+    const liveId = ch.youtubeId || youtubeLiveId(ch.youtubeUrl);
+
+    if (liveId && typeof window.openPlayer === "function") {
+      window.openPlayer({source:"youtube",id:liveId,title:ch.name,meta:`${ch.country} · ${ch.category} · YouTube oficial`});
       return;
     }
+
     const modal=document.getElementById("player-modal"), frame=document.getElementById("player-frame");
     if(!modal||!frame)return;
     document.getElementById("player-title").textContent=ch.name;
     document.getElementById("player-meta").textContent=`${ch.country} · ${ch.category}`;
-    frame.innerHTML=`<div class="external-player tv-channel-pending"><div class="tv-pending-icon">${esc(initials(ch.name))}</div><h3>Live atual não configurada</h3><p>O OIO não inventa IDs de transmissão. Use o canal oficial até o ID da live ser confirmado.</p><a href="${esc(ch.youtubeUrl)}" target="_blank" rel="noopener noreferrer">Abrir canal oficial no YouTube</a></div>`;
+    frame.innerHTML=`<div class="external-player tv-channel-pending"><div class="tv-pending-icon">${esc(initials(ch.name))}</div><h3>Live atual não configurada</h3><p>O OIO não inventa IDs de transmissão. Use o canal oficial até o ID da live ser confirmado.</p><a href="${esc(ch.youtubeUrl)}" target="_blank" rel="noopener noreferrer">Abrir transmissão/canal oficial no YouTube</a></div>`;
     modal.classList.add("open"); modal.setAttribute("aria-hidden","false"); document.body.classList.add("modal-open");
   }
 
@@ -64,7 +74,7 @@
 
   function render() {
     const host=document.getElementById("tv-channels-home"); if(!host)return;
-    host.innerHTML=`<div class="section-title tv-section-title"><div><p class="youtube-home-kicker">TV · Emissoras</p><h2>📺 Emissoras</h2><p>Cada emissora segue o mesmo padrão visual dos cards do Audius.</p></div></div><div class="tv-channel-track">${tvChannelsData.map(renderCard).join("")}</div>`;
+    host.innerHTML=`<div class="section-title tv-section-title"><div><p class="youtube-home-kicker">TV · Emissoras</p><h2>📺 Emissoras</h2><p>Cards de emissoras com transmissão oficial quando disponível.</p></div></div><div class="tv-channel-track">${tvChannelsData.map(renderCard).join("")}</div>`;
     bind(host);
   }
 
