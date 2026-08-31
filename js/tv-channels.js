@@ -7,29 +7,34 @@
     return match ? match[1] : null;
   };
 
-  const avatar = (handle) => `https://unavatar.io/youtube/${encodeURIComponent(handle)}`;
+  // Logos reais publicados em Wikimedia Commons, ou favicon do domínio oficial
+  // quando não há um arquivo Commons adequado. Não usa mais unavatar.io.
+  const commonsLogo = (file) =>
+    `https://commons.wikimedia.org/wiki/Special:Redirect/file/${encodeURIComponent(file)}`;
+  const domainLogo = (domain) =>
+    `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=256`;
 
   const tvChannelsData = [
-    {id:"record-news-br",name:"Record News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:avatar("@recordnews"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@recordnews"},
-    {id:"cnn-brasil",name:"CNN Brasil",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:avatar("@cnnbrasil"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@cnnbrasil"},
-    {id:"sbt-news",name:"SBT News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:avatar("@sbtnews"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@sbtnews"},
-    {id:"tv-cultura",name:"TV Cultura",category:"Cultura e Infantil",country:"🇧🇷 Brasil",logoUrl:avatar("@TVCultura"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@TVCultura"},
-    {id:"band",name:"Band",category:"TV Aberta",country:"🇧🇷 Brasil",logoUrl:avatar("@BandJornalismo"),youtubeId:"s_WOpljDii8",youtubeUrl:"https://www.youtube.com/live/s_WOpljDii8?is=CiGWUYnxr3hLBgQ_"},
-    {id:"cazetv",name:"CazéTV",category:"Esportes",country:"🇧🇷 Brasil",logoUrl:avatar("@CazeTV"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@CazeTV"},
-    {id:"abc-news-us",name:"ABC News",category:"Notícias",country:"🇺🇸 EUA",logoUrl:avatar("@ABCNews"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@ABCNews"},
-    {id:"nbc-news-us",name:"NBC News",category:"Notícias",country:"🇺🇸 EUA",logoUrl:avatar("@NBCNews"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@NBCNews"},
-    {id:"cbs-news-us",name:"CBS News",category:"Notícias",country:"🇺🇸 EUA",logoUrl:avatar("@CBSNews"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@CBSNews"},
-    {id:"livenow-fox",name:"LiveNOW from FOX",category:"Notícias",country:"🇺🇸 EUA",logoUrl:avatar("@LiveNOWfromFOX"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@LiveNOWfromFOX"},
-    {id:"sky-news",name:"Sky News",category:"Notícias",country:"🇬🇧 Reino Unido",logoUrl:avatar("@SkyNews"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@SkyNews"},
-    {id:"france24",name:"France 24",category:"Internacional",country:"🇫🇷 França",logoUrl:avatar("@FRANCE24"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@FRANCE24"},
-    {id:"dw-news",name:"DW News",category:"Internacional",country:"🇩🇪 Alemanha",logoUrl:avatar("@dwnews"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@dwnews"},
-    {id:"euronews",name:"Euronews",category:"Internacional",country:"🇪🇺 Europa",logoUrl:avatar("@euronews"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@euronews"},
-    {id:"al-jazeera-en",name:"Al Jazeera English",category:"Internacional",country:"🇶🇦 Catar",logoUrl:avatar("@AlJazeeraEnglish"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@AlJazeeraEnglish"},
-    {id:"24-horas",name:"24 Horas",category:"Notícias",country:"🇨🇱 Chile",logoUrl:avatar("@24horas"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@24horas"},
-    {id:"tn-argentina",name:"TN",category:"Notícias",country:"🇦🇷 Argentina",logoUrl:avatar("@todonoticias"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@todonoticias"},
-    {id:"c5n",name:"C5N",category:"Notícias",country:"🇦🇷 Argentina",logoUrl:avatar("@C5N"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@C5N"},
-    {id:"cgtn",name:"CGTN",category:"Internacional",country:"🇨🇳 China",logoUrl:avatar("@CGTN"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@CGTN"},
-    {id:"annnews",name:"ANNnewsCH",category:"Notícias",country:"🇯🇵 Japão",logoUrl:avatar("@ANNnewsCH"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@ANNnewsCH"}
+    {id:"record-news-br",name:"Record News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("Record News logo 2023.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@recordnews"},
+    {id:"cnn-brasil",name:"CNN Brasil",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("CNN Brasil (red background).svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@cnnbrasil"},
+    {id:"sbt-news",name:"SBT News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("SBT News 2025.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@sbtnews"},
+    {id:"tv-cultura",name:"TV Cultura",category:"Cultura e Infantil",country:"🇧🇷 Brasil",logoUrl:commonsLogo("TV Cultura logo.png"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@TVCultura"},
+    {id:"band",name:"Band",category:"TV Aberta",country:"🇧🇷 Brasil",logoUrl:commonsLogo("Band 2026 logo.png"),youtubeId:"s_WOpljDii8",youtubeUrl:"https://www.youtube.com/live/s_WOpljDii8?is=CiGWUYnxr3hLBgQ_"},
+    {id:"cazetv",name:"CazéTV",category:"Esportes",country:"🇧🇷 Brasil",logoUrl:commonsLogo("CazéTV wordmark.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@CazeTV"},
+    {id:"abc-news-us",name:"ABC News",category:"Notícias",country:"🇺🇸 EUA",logoUrl:commonsLogo("ABC News logo 2021.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@ABCNews"},
+    {id:"nbc-news-us",name:"NBC News",category:"Notícias",country:"🇺🇸 EUA",logoUrl:commonsLogo("NBC News (2023).svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@NBCNews"},
+    {id:"cbs-news-us",name:"CBS News",category:"Notícias",country:"🇺🇸 EUA",logoUrl:commonsLogo("CBS News logo (2020).svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@CBSNews"},
+    {id:"livenow-fox",name:"LiveNOW from FOX",category:"Notícias",country:"🇺🇸 EUA",logoUrl:domainLogo("livenowfox.com"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@LiveNOWfromFOX"},
+    {id:"sky-news",name:"Sky News",category:"Notícias",country:"🇬🇧 Reino Unido",logoUrl:commonsLogo("Sky News 2026.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@SkyNews"},
+    {id:"france24",name:"France 24",category:"Internacional",country:"🇫🇷 França",logoUrl:commonsLogo("France24.png"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@FRANCE24"},
+    {id:"dw-news",name:"DW News",category:"Internacional",country:"🇩🇪 Alemanha",logoUrl:commonsLogo("DW News Logo.png"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@dwnews"},
+    {id:"euronews",name:"Euronews",category:"Internacional",country:"🇪🇺 Europa",logoUrl:commonsLogo("Euronews Logo 2025.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@euronews"},
+    {id:"al-jazeera-en",name:"Al Jazeera English",category:"Internacional",country:"🇶🇦 Catar",logoUrl:commonsLogo("Aljazeera eng.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@AlJazeeraEnglish"},
+    {id:"24-horas",name:"24 Horas",category:"Notícias",country:"🇨🇱 Chile",logoUrl:domainLogo("24horas.cl"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@24horas"},
+    {id:"tn-argentina",name:"TN",category:"Notícias",country:"🇦🇷 Argentina",logoUrl:commonsLogo("TN todo noticias logo.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@todonoticias"},
+    {id:"c5n",name:"C5N",category:"Notícias",country:"🇦🇷 Argentina",logoUrl:commonsLogo("Logo-c5n.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@C5N"},
+    {id:"cgtn",name:"CGTN",category:"Internacional",country:"🇨🇳 China",logoUrl:commonsLogo("CGTN.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@CGTN"},
+    {id:"annnews",name:"ANNnewsCH",category:"Notícias",country:"🇯🇵 Japão",logoUrl:domainLogo("news.tv-asahi.co.jp"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@ANNnewsCH"}
   ];
 
   const initials = name => String(name).split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase();
@@ -51,13 +56,13 @@
   function openChannel(ch) {
     const liveId = ch.youtubeId || youtubeLiveId(ch.youtubeUrl);
 
-    // Quando existe uma URL de live específica, usa o player oficial já existente no OIO.
+    // Só usa o player interno quando existe uma live específica e confirmada.
     if (liveId && typeof window.openPlayer === "function") {
       window.openPlayer({source:"youtube",id:liveId,title:ch.name,meta:`${ch.country} · ${ch.category} · YouTube oficial`});
       return;
     }
 
-    // Para canais cuja live muda, abre diretamente o canal oficial no YouTube.
+    // As emissoras que mudam o ID da live abrem o canal oficial diretamente.
     window.open(ch.youtubeUrl, "_blank", "noopener,noreferrer");
   }
 
