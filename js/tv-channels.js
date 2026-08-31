@@ -7,17 +7,15 @@
     return match ? match[1] : null;
   };
 
-  // Logos reais publicados em Wikimedia Commons, ou favicon do domínio oficial
-  // quando não há um arquivo Commons adequado. Não usa mais unavatar.io.
   const commonsLogo = (file) =>
     `https://commons.wikimedia.org/wiki/Special:Redirect/file/${encodeURIComponent(file)}`;
   const domainLogo = (domain) =>
     `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=256`;
 
   const tvChannelsData = [
-    {id:"record-news-br",name:"Record News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("Record News logo 2023.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@recordnews"},
-    {id:"cnn-brasil",name:"CNN Brasil",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("CNN Brasil (red background).svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@cnnbrasil"},
-    {id:"sbt-news",name:"SBT News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("SBT News 2025.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@sbtnews"},
+    {id:"record-news-br",name:"Record News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("Record News logo 2023.svg"),youtubeId:"Wpq6VRLWtM8",youtubeUrl:"https://www.youtube.com/@recordnews"},
+    {id:"cnn-brasil",name:"CNN Brasil",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("CNN Brasil (red background).svg"),youtubeId:"vaTmIq0JWCM",youtubeUrl:"https://www.youtube.com/@cnnbrasil"},
+    {id:"sbt-news",name:"SBT News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("SBT News 2025.svg"),youtubeId:"8FdvAuFQWFk",youtubeUrl:"https://www.youtube.com/@sbtnews"},
     {id:"tv-cultura",name:"TV Cultura",category:"Cultura e Infantil",country:"🇧🇷 Brasil",logoUrl:commonsLogo("TV Cultura logo.png"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@TVCultura"},
     {id:"band",name:"Band",category:"TV Aberta",country:"🇧🇷 Brasil",logoUrl:commonsLogo("Band 2026 logo.png"),youtubeId:"s_WOpljDii8",youtubeUrl:"https://www.youtube.com/live/s_WOpljDii8?is=CiGWUYnxr3hLBgQ_"},
     {id:"cazetv",name:"CazéTV",category:"Esportes",country:"🇧🇷 Brasil",logoUrl:commonsLogo("CazéTV wordmark.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@CazeTV"},
@@ -40,11 +38,12 @@
   const initials = name => String(name).split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase();
 
   function renderCard(ch) {
-    return `<article class="tv-channel-card" data-tv-id="${esc(ch.id)}" tabindex="0" role="button" aria-label="Abrir ${esc(ch.name)} no YouTube">
+    const action = ch.youtubeId ? "Assistir ao vivo no OIO" : "Abrir canal oficial no YouTube";
+    return `<article class="tv-channel-card" data-tv-id="${esc(ch.id)}" tabindex="0" role="button" aria-label="${esc(action)}: ${esc(ch.name)}">
       <div class="tv-channel-logo-wrap">
         <img class="tv-channel-logo" src="${esc(ch.logoUrl)}" alt="Logo ${esc(ch.name)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
         <div class="tv-channel-logo-fallback" hidden>${esc(initials(ch.name))}</div>
-        <button class="tv-channel-play" type="button" aria-label="Abrir ${esc(ch.name)} no YouTube">▶</button>
+        <button class="tv-channel-play" type="button" aria-label="${esc(action)}">▶</button>
       </div>
       <div class="tv-channel-body">
         <strong title="${esc(ch.name)}">${esc(ch.name)}</strong>
@@ -56,13 +55,15 @@
   function openChannel(ch) {
     const liveId = ch.youtubeId || youtubeLiveId(ch.youtubeUrl);
 
-    // Só usa o player interno quando existe uma live específica e confirmada.
+    // Quando temos uma transmissão específica, o usuário permanece no OIO:
+    // o vídeo é reproduzido pelo player oficial incorporado do YouTube.
     if (liveId && typeof window.openPlayer === "function") {
-      window.openPlayer({source:"youtube",id:liveId,title:ch.name,meta:`${ch.country} · ${ch.category} · YouTube oficial`});
+      window.openPlayer({source:"youtube",id:liveId,title:ch.name,meta:`${ch.country} · ${ch.category} · YouTube oficial · AO VIVO`});
       return;
     }
 
-    // As emissoras que mudam o ID da live abrem o canal oficial diretamente.
+    // Se a emissora troca o ID da live, não inventamos uma URL de reprodução.
+    // O card continua levando ao canal oficial para que o usuário encontre a live atual.
     window.open(ch.youtubeUrl, "_blank", "noopener,noreferrer");
   }
 
@@ -78,7 +79,7 @@
 
   function render() {
     const host=document.getElementById("tv-channels-home"); if(!host)return;
-    host.innerHTML=`<div class="section-title tv-section-title"><div><p class="youtube-home-kicker">TV · Emissoras</p><h2>📺 Emissoras</h2><p>Cada emissora abre seu canal oficial no YouTube.</p></div></div><div class="tv-channel-track">${tvChannelsData.map(renderCard).join("")}</div>`;
+    host.innerHTML=`<div class="section-title tv-section-title"><div><p class="youtube-home-kicker">TV · Emissoras</p><h2>📺 Emissoras</h2><p>Toque em uma emissora para assistir no OIO quando houver uma live identificada.</p></div></div><div class="tv-channel-track">${tvChannelsData.map(renderCard).join("")}</div>`;
     bind(host);
   }
 
