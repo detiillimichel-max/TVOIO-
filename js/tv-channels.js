@@ -13,12 +13,12 @@
     `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=256`;
 
   const tvChannelsData = [
-    {id:"record-news-br",name:"Record News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("Record News logo 2023.svg"),youtubeId:"Wpq6VRLWtM8",youtubeChannelId:"UCuiLR4p6wQ3xLEm15pEn1Xw",youtubeUrl:"https://www.youtube.com/@recordnews/live"},
-    {id:"cnn-brasil",name:"CNN Brasil",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("CNN Brasil (red background).svg"),youtubeId:"vaTmIq0JWCM",youtubeChannelId:"UCvdwhh_fDyWccR42-rReZLw",youtubeUrl:"https://www.youtube.com/@cnnbrasil/live"},
+    {id:"record-news-br",name:"Record News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("Record News logo 2023.svg"),youtubeId:null,youtubeChannelId:"UCuiLR4p6wQ3xLEm15pEn1Xw",youtubeUrl:"https://www.youtube.com/@recordnews/live"},
+    {id:"cnn-brasil",name:"CNN Brasil",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("CNN Brasil (red background).svg"),youtubeId:null,youtubeChannelId:"UCvdwhh_fDyWccR42-rReZLw",youtubeUrl:"https://www.youtube.com/@cnnbrasil/live"},
     {id:"sbt-news",name:"SBT News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("SBT News 2025.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@sbtnews/live"},
     {id:"tv-cultura",name:"TV Cultura",category:"Cultura e Infantil",country:"🇧🇷 Brasil",logoUrl:commonsLogo("TV Cultura logo.png"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@TVCultura/live"},
-    {id:"band",name:"Band",category:"TV Aberta",country:"🇧🇷 Brasil",logoUrl:commonsLogo("Band 2026 logo.png"),youtubeId:"s_WOpljDii8",youtubeUrl:"https://www.youtube.com/@BandJornalismo/live"},
-    {id:"cazetv",name:"CazéTV",category:"Esportes",country:"🇧🇷 Brasil",logoUrl:commonsLogo("CazéTV wordmark.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@CazeTV/live"},
+    {id:"band",name:"Band",category:"TV Aberta",country:"🇧🇷 Brasil",logoUrl:commonsLogo("Band 2026 logo.png"),youtubeId:null,youtubeChannelId:"UCoa-D_VfMkFrCYodrOC9-mA",youtubeUrl:"https://www.youtube.com/@BandJornalismo/live"},
+    {id:"cazetv",name:"CazéTV",category:"Esportes",country:"🇧🇷 Brasil",logoUrl:commonsLogo("CazéTV wordmark.svg"),youtubeId:null,youtubeChannelId:"UCZiYbVptd3PVPf4f6eR6UaQ",youtubeUrl:"https://www.youtube.com/@CazeTV/live"},
     {id:"abc-news-us",name:"ABC News",category:"Notícias",country:"🇺🇸 EUA",logoUrl:commonsLogo("ABC News logo 2021.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@ABCNews/live"},
     {id:"nbc-news-us",name:"NBC News",category:"Notícias",country:"🇺🇸 EUA",logoUrl:commonsLogo("NBC News (2023).svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@NBCNews/live"},
     {id:"cbs-news-us",name:"CBS News",category:"Notícias",country:"🇺🇸 EUA",logoUrl:commonsLogo("CBS News logo (2020).svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@CBSNews/live"},
@@ -78,12 +78,13 @@
       window.openPlayer({source:"youtube",id:liveId,title:ch.name,meta:`${ch.country} · ${ch.category} · transmissão ao vivo confirmada`});
       return;
     }
-    if (ch.youtubeId) {
-      window.openPlayer({source:"youtube",id:ch.youtubeId,title:ch.name,meta:`${ch.country} · ${ch.category} · vídeo oficial da emissora`});
+    // Priorizar o live endpoint do canal: vídeos fixos podem estar privados ou encerrados.
+    if (ch.youtubeChannelId) {
+      window.openPlayer({source:"youtube-live",id:ch.youtubeChannelId,title:ch.name,meta:`${ch.country} · ${ch.category} · procurando transmissão ao vivo oficial`});
       return;
     }
-    if (ch.youtubeChannelId) {
-      window.openPlayer({source:"youtube-live",id:ch.youtubeChannelId,title:ch.name,meta:`${ch.country} · ${ch.category} · tentando transmissão ao vivo oficial`});
+    if (ch.youtubeId) {
+      window.openPlayer({source:"youtube",id:ch.youtubeId,title:ch.name,meta:`${ch.country} · ${ch.category} · vídeo oficial da emissora`});
       return;
     }
     window.openPlayer({source:"channel-unavailable",id:ch.youtubeUrl,title:ch.name,meta:`${ch.country} · ${ch.category} · transmissão não confirmada`});
