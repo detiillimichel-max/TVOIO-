@@ -137,9 +137,10 @@ async function main() {
       if (resolved) output[channel.key] = resolved;
       else delete output[channel.key];
     } catch (error) {
-      // Falha de rede/API nunca apaga uma entrada válida já publicada.
+      // Fail closed: without a successful fresh validation, do not advertise the
+      // previous entry as currently live. The official channel remains the fallback.
       console.error(`[${channel.key}] ${error.message}`);
-      if (!previous[channel.key]) delete output[channel.key];
+      delete output[channel.key];
     }
   }
 
