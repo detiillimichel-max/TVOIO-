@@ -92,14 +92,11 @@ function isLive(video) {
 }
 
 async function resolveGroup(channel, previous) {
-  if (channel.group === "A") {
-    if (!channel.channelId) return null;
-    return { mode: "channel-live", channelId: channel.channelId };
-  }
-
+  // Never publish a channel as live based only on its name or channel ID.
+  // RSS supplies candidate video IDs; videos.list confirms liveBroadcastContent.
   if (!channel.channelId) {
-    console.warn(`[${channel.key}] sem channelId confirmado; RSS ignorado.`);
-    return previous || null;
+    console.warn(`[${channel.key}] sem channelId confirmado; somente fallback para canal oficial.`);
+    return null;
   }
 
   let rssIds = [];
@@ -109,23 +106,24 @@ async function resolveGroup(channel, previous) {
     console.warn(`[${channel.key}] RSS indisponível: ${error.message}`);
   }
 
-  // O último vídeo conhecido entra no lote também. Assim uma live que continua
-  // ativa não depende de o RSS ter acabado de mudar.
+  // Revalidate the previous live too, so a finished broadcast is removed.
   const candidateIds = unique([
     ...rssIds,
     previous?.mode === "video" ? previous.videoId : null
   ]);
-
-  if (!candidateIds.length) return previous || null;
+  if (!candidateIds.length) return null;
 
   const videos = await videosList(candidateIds);
-  const live = videos.find(isLive);
+  const live = videos.find(video =>
+    video?.snippet?.channelId === channel.channelId && isLive(video)
+  );
   if (!live) return null;
 
   return {
     mode: "video",
     videoId: live.id,
-    channelId: live.snippet?.channelId || channel.channelId
+    channelId: live.snippet.channelId,
+    validatedAt: new Date().toISOString()
   };
 }
 
