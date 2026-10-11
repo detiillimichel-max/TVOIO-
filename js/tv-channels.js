@@ -13,8 +13,8 @@
     `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=256`;
 
   const tvChannelsData = [
-    {id:"record-news-br",name:"Record News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("Record News logo 2023.svg"),youtubeId:"Wpq6VRLWtM8",youtubeUrl:"https://www.youtube.com/@recordnews/live"},
-    {id:"cnn-brasil",name:"CNN Brasil",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("CNN Brasil (red background).svg"),youtubeId:"vaTmIq0JWCM",youtubeUrl:"https://www.youtube.com/@cnnbrasil/live"},
+    {id:"record-news-br",name:"Record News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("Record News logo 2023.svg"),youtubeId:"Wpq6VRLWtM8",youtubeChannelId:"UCuiLR4p6wQ3xLEm15pEn1Xw",youtubeUrl:"https://www.youtube.com/@recordnews/live"},
+    {id:"cnn-brasil",name:"CNN Brasil",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("CNN Brasil (red background).svg"),youtubeId:"vaTmIq0JWCM",youtubeChannelId:"UCvdwhh_fDyWccR42-rReZLw",youtubeUrl:"https://www.youtube.com/@cnnbrasil/live"},
     {id:"sbt-news",name:"SBT News",category:"Notícias",country:"🇧🇷 Brasil",logoUrl:commonsLogo("SBT News 2025.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@sbtnews/live"},
     {id:"tv-cultura",name:"TV Cultura",category:"Cultura e Infantil",country:"🇧🇷 Brasil",logoUrl:commonsLogo("TV Cultura logo.png"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@TVCultura/live"},
     {id:"band",name:"Band",category:"TV Aberta",country:"🇧🇷 Brasil",logoUrl:commonsLogo("Band 2026 logo.png"),youtubeId:"s_WOpljDii8",youtubeUrl:"https://www.youtube.com/@BandJornalismo/live"},
