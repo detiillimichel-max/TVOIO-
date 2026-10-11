@@ -22,6 +22,8 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           node --check js/app.js
+          node --check js/tv-channels.js
+          node --check scripts/update-tv-lives.mjs
           node --check js/config.js
           node --check js/globo.js
           node --check js/band.js
