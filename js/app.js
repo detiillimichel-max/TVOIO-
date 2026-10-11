@@ -36,7 +36,8 @@ function openPlayer({ source, id, title, meta = "" }) {
   if (!modal || !frame) return;
   document.getElementById("player-title").textContent = title || "Reproduzindo";
   document.getElementById("player-meta").textContent = meta || source;
-  if (source === "youtube") frame.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0" title="${esc(title)}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  if (source === "youtube-live") frame.innerHTML = `<iframe src="https://www.youtube.com/embed/live_stream?channel=${encodeURIComponent(id)}&autoplay=1&rel=0" title="${esc(title)}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  else if (source === "youtube") frame.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0" title="${esc(title)}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
   else if (source === "vimeo") frame.innerHTML = `<iframe src="https://player.vimeo.com/video/${encodeURIComponent(id)}?autoplay=1" title="${esc(title)}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
   else frame.innerHTML = `<div class="external-player"><div>${icon(source === "spotify" ? "music-2" : "external-link", 30)}</div><h3>Conteúdo externo</h3><p>Esta fonte entrega o conteúdo em sua própria página.</p><a href="${esc(id || "#")}" target="_blank" rel="noopener noreferrer">Abrir conteúdo</a></div>`;
   modal.classList.add("open"); modal.setAttribute("aria-hidden", "false"); document.body.classList.add("modal-open"); refreshIcons();
