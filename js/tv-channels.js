@@ -37,12 +37,31 @@
 
   const initials = name => String(name).split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase();
 
+  const LIVE_KEYS = {
+    "record-news-br": "record-news",
+    "cnn-brasil": "cnn-brasil",
+    "sbt-news": "sbt-news",
+    "tv-cultura": "tv-cultura",
+    "band": "band",
+    "cazetv": "cazetv"
+  };
+  let liveData = {};
+
+  function confirmedLive(ch) {
+    const entry = liveData[LIVE_KEYS[ch.id] || ch.id];
+    if (entry?.mode !== "video" || !/^[A-Za-z0-9_-]{11}$/.test(String(entry.videoId || ""))) return null;
+    return entry.videoId;
+  }
+
   function renderCard(ch) {
-    const action = ch.youtubeId ? "Assistir no player do OIO" : "Abrir canal oficial no YouTube";
+    const liveId = confirmedLive(ch);
+    const action = liveId ? "Assistir transmissão ao vivo confirmada" : "Abrir canal oficial no YouTube";
+    const status = liveId ? '<span class="tv-live-badge">● AO VIVO CONFIRMADO</span>' : '';
     return `<article class="tv-channel-card" data-tv-id="${esc(ch.id)}" tabindex="0" role="button" aria-label="${esc(action)}: ${esc(ch.name)}">
       <div class="tv-channel-logo-wrap">
         <img class="tv-channel-logo" src="${esc(ch.logoUrl)}" alt="Logo ${esc(ch.name)}" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
         <div class="tv-channel-logo-fallback" hidden>${esc(initials(ch.name))}</div>
+        ${status}
         <button class="tv-channel-play" type="button" aria-label="${esc(action)}">▶</button>
       </div>
       <div class="tv-channel-body">
@@ -53,18 +72,24 @@
   }
 
   function openChannel(ch) {
-    const liveId = ch.youtubeId || youtubeLiveId(ch.youtubeUrl);
-
-    // Quando temos uma transmissão específica, o usuário permanece no OIO:
-    // o conteúdo é reproduzido pelo player oficial incorporado do YouTube.
+    const liveId = confirmedLive(ch);
     if (liveId && typeof window.openPlayer === "function") {
-      window.openPlayer({source:"youtube",id:liveId,title:ch.name,meta:`${ch.country} · ${ch.category} · YouTube oficial`});
+      window.openPlayer({source:"youtube",id:liveId,title:ch.name,meta:`${ch.country} · ${ch.category} · transmissão ao vivo confirmada`});
       return;
     }
-
-    // Se a emissora troca o ID da live, não inventamos uma URL de reprodução.
-    // O card continua levando ao canal oficial para encontrar a transmissão atual.
     window.open(ch.youtubeUrl, "_blank", "noopener,noreferrer");
+  }
+
+  async function loadLiveData() {
+    try {
+      const response = await fetch("./data/tv-live-data.json", { cache: "no-store", headers: { Accept: "application/json" } });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      liveData = data && typeof data === "object" ? data : {};
+    } catch (error) {
+      liveData = {};
+      console.info("TV OIO: catálogo de lives indisponível; usando canais oficiais.", error);
+    }
   }
 
   function bind(root) {
@@ -79,11 +104,15 @@
 
   function render() {
     const host=document.getElementById("tv-channels-home"); if(!host)return;
-    host.innerHTML=`<div class="section-title tv-section-title"><div><p class="youtube-home-kicker">TV · Emissoras</p><h2>📺 Emissoras</h2><p>Toque em uma emissora para assistir no OIO quando houver uma transmissão identificada.</p></div></div><div class="tv-channel-track">${tvChannelsData.map(renderCard).join("")}</div>`;
+    host.innerHTML=`<div class="section-title tv-section-title"><div><p class="youtube-home-kicker">TV · Emissoras</p><h2>📺 Emissoras</h2><p>Transmissões ao vivo só aparecem como confirmadas após validação. Sem confirmação, o card abre o canal oficial.</p></div></div><div class="tv-channel-track">${tvChannelsData.map(renderCard).join("")}</div>`;
     bind(host);
   }
 
   window.TVOIO_TV_CHANNELS=tvChannelsData;
   window.renderTVOIOTvChannels=render;
-  document.addEventListener("DOMContentLoaded",render);
+  document.addEventListener("DOMContentLoaded", async () => {
+    render();
+    await loadLiveData();
+    render();
+  });
 })();

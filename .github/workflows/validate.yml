@@ -22,12 +22,14 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           node --check js/app.js
+          node --check js/tv-channels.js
+          node --check scripts/update-tv-lives.mjs
           node --check js/config.js
-          node --check js/globo.js
-          node --check js/band.js
-          node --check js/cultura.js
-          node --check js/tvescola.js
-          node --check js/canalfuturalive.js
+          node --input-type=module --check < js/globo.js
+          node --input-type=module --check < js/band.js
+          node --input-type=module --check < js/cultura.js
+          node --input-type=module --check < js/tvescola.js
+          node --input-type=module --check < js/canalfuturalive.js
           node --check worker.js
 
       - name: Verify frontend has no obvious secret files
