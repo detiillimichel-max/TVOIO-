@@ -18,12 +18,12 @@ const OUTPUT = new URL("../data/tv-live-data.json", import.meta.url);
 const CHANNELS = [
   // Grupo A — preencher somente com Channel IDs oficialmente confirmados.
   // Enquanto o ID não estiver confirmado, o canal não é publicado como channel-live.
-  { key: "record-news", name: "Record News", group: "A", channelId: "" },
+  { key: "record-news", name: "Record News", group: "A", channelId: "UCuiLR4p6wQ3xLEm15pEn1Xw" },
   { key: "cnn-brasil", name: "CNN Brasil", group: "A", channelId: "UCvdwhh_fDyWccR42-rReZLw" },
   { key: "sbt-news", name: "SBT News", group: "A", channelId: "" },
 
   // Grupo B — a Action roda em horários definidos no workflow.
-  { key: "band", name: "Band", group: "B", channelId: "", searchQuery: "Band ao vivo" },
+  { key: "band", name: "Band", group: "B", channelId: "UCoa-D_VfMkFrCYodrOC9-mA", searchQuery: "Band ao vivo" },
   { key: "tv-cultura", name: "TV Cultura", group: "B", channelId: "", searchQuery: "TV Cultura ao vivo" },
 
   // Grupo C — eventos esportivos. O RSS é o filtro barato; não fazemos search.list aqui.
