@@ -78,6 +78,10 @@
       window.openPlayer({source:"youtube",id:liveId,title:ch.name,meta:`${ch.country} · ${ch.category} · transmissão ao vivo confirmada`});
       return;
     }
+    if (ch.youtubeId) {
+      window.openPlayer({source:"youtube",id:ch.youtubeId,title:ch.name,meta:`${ch.country} · ${ch.category} · vídeo oficial da emissora`});
+      return;
+    }
     if (ch.youtubeChannelId) {
       window.openPlayer({source:"youtube-live",id:ch.youtubeChannelId,title:ch.name,meta:`${ch.country} · ${ch.category} · tentando transmissão ao vivo oficial`});
       return;
