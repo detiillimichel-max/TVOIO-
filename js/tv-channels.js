@@ -55,7 +55,7 @@
 
   function renderCard(ch) {
     const liveId = confirmedLive(ch);
-    const action = liveId ? "Assistir transmissão ao vivo confirmada" : "Abrir canal oficial no YouTube";
+    const action = liveId ? "Assistir transmissão ao vivo confirmada" : "Abrir emissora no player do TV OIO";
     const status = liveId ? '<span class="tv-live-badge">● AO VIVO CONFIRMADO</span>' : '';
     return `<article class="tv-channel-card" data-tv-id="${esc(ch.id)}" tabindex="0" role="button" aria-label="${esc(action)}: ${esc(ch.name)}">
       <div class="tv-channel-logo-wrap">
@@ -73,11 +73,16 @@
 
   function openChannel(ch) {
     const liveId = confirmedLive(ch);
-    if (liveId && typeof window.openPlayer === "function") {
+    if (typeof window.openPlayer !== "function") return;
+    if (liveId) {
       window.openPlayer({source:"youtube",id:liveId,title:ch.name,meta:`${ch.country} · ${ch.category} · transmissão ao vivo confirmada`});
       return;
     }
-    window.open(ch.youtubeUrl, "_blank", "noopener,noreferrer");
+    if (ch.youtubeChannelId) {
+      window.openPlayer({source:"youtube-live",id:ch.youtubeChannelId,title:ch.name,meta:`${ch.country} · ${ch.category} · tentando transmissão ao vivo oficial`});
+      return;
+    }
+    window.openPlayer({source:"channel-unavailable",id:ch.youtubeUrl,title:ch.name,meta:`${ch.country} · ${ch.category} · transmissão não confirmada`});
   }
 
   async function loadLiveData() {
@@ -104,7 +109,7 @@
 
   function render() {
     const host=document.getElementById("tv-channels-home"); if(!host)return;
-    host.innerHTML=`<div class="section-title tv-section-title"><div><p class="youtube-home-kicker">TV · Emissoras</p><h2>📺 Emissoras</h2><p>Transmissões ao vivo só aparecem como confirmadas após validação. Sem confirmação, o card abre o canal oficial.</p></div></div><div class="tv-channel-track">${tvChannelsData.map(renderCard).join("")}</div>`;
+    host.innerHTML=`<div class="section-title tv-section-title"><div><p class="youtube-home-kicker">TV · Emissoras</p><h2>📺 Emissoras</h2><p>As emissoras abrem no player do TV OIO. Quando uma transmissão não pode ser incorporada, o app informa a indisponibilidade.</p></div></div><div class="tv-channel-track">${tvChannelsData.map(renderCard).join("")}</div>`;
     bind(host);
   }
 
