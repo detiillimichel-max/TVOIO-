@@ -32,7 +32,14 @@
     {id:"tn-argentina",name:"TN",category:"Notícias",country:"🇦🇷 Argentina",logoUrl:commonsLogo("TN todo noticias logo.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@todonoticias/live"},
     {id:"c5n",name:"C5N",category:"Notícias",country:"🇦🇷 Argentina",logoUrl:commonsLogo("Logo-c5n.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@C5N/live"},
     {id:"cgtn",name:"CGTN",category:"Internacional",country:"🇨🇳 China",logoUrl:commonsLogo("CGTN.svg"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@CGTN/live"},
-    {id:"annnews",name:"ANNnewsCH",category:"Notícias",country:"🇯🇵 Japão",logoUrl:domainLogo("news.tv-asahi.co.jp"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@ANNnewsCH/live"}
+    {id:"annnews",name:"ANNnewsCH",category:"Notícias",country:"🇯🇵 Japão",logoUrl:domainLogo("news.tv-asahi.co.jp"),youtubeId:null,youtubeUrl:"https://www.youtube.com/@ANNnewsCH/live"},
+
+    // Emissoras públicas e educativas — segunda linha de cards.
+    {id:"tv-brasil",name:"TV Brasil",category:"Pública e Educativa",country:"🇧🇷 Brasil",logoUrl:domainLogo("tvbrasil.ebc.com.br"),youtubeId:null,group:"publica",officialEmbedUrl:"https://aovivo.ebc.com.br/embed-tvbrasil.html",youtubeUrl:"https://tvbrasil.ebc.com.br/webtv/"},
+    {id:"canal-futura",name:"Canal Futura",category:"Educação e Ciência",country:"🇧🇷 Brasil",logoUrl:domainLogo("futura.frm.org.br"),youtubeId:null,group:"publica",youtubeUrl:"https://futura.frm.org.br/como-assistir"},
+    {id:"tv-camara",name:"TV Câmara",category:"Legislativo",country:"🇧🇷 Brasil",logoUrl:domainLogo("camara.leg.br"),youtubeId:null,group:"publica",officialEmbedUrl:"https://www2.camara.leg.br/camaranoticias/tv/embedAoVivo.html",youtubeUrl:"https://www2.camara.leg.br/camaranoticias/tv/aoVivo.html"},
+    {id:"tv-senado",name:"TV Senado",category:"Legislativo",country:"🇧🇷 Brasil",logoUrl:domainLogo("senado.leg.br"),youtubeId:null,group:"publica",youtubeUrl:"https://www12.senado.leg.br/tv/programas/ao-vivo/2026"},
+    {id:"tv-justica",name:"TV Justiça",category:"Judiciário",country:"🇧🇷 Brasil",logoUrl:domainLogo("portal.stf.jus.br"),youtubeId:null,group:"publica",youtubeUrl:"https://portal.stf.jus.br/"}
   ];
 
   const initials = name => String(name).split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase();
@@ -119,7 +126,9 @@
 
   function render() {
     const host=document.getElementById("tv-channels-home"); if(!host)return;
-    host.innerHTML=`<div class="section-title tv-section-title"><div><p class="youtube-home-kicker">TV · Emissoras</p><h2>📺 Emissoras</h2><p>As emissoras abrem no player do TV OIO. Quando uma transmissão não pode ser incorporada, o app informa a indisponibilidade.</p></div></div><div class="tv-channel-track">${tvChannelsData.map(renderCard).join("")}</div>`;
+    const mainChannels = tvChannelsData.filter(ch => ch.group !== "publica");
+    const publicChannels = tvChannelsData.filter(ch => ch.group === "publica");
+    host.innerHTML=`<div class="section-title tv-section-title"><div><p class="youtube-home-kicker">TV · Emissoras</p><h2>📺 Emissoras</h2><p>As emissoras abrem no player do TV OIO. Quando uma transmissão não pode ser incorporada, o app informa a indisponibilidade.</p></div></div><div class="tv-channel-track">${mainChannels.map(renderCard).join("")}</div><div class="section-title tv-section-title"><div><p class="youtube-home-kicker">TV · Serviço público</p><h2>📡 Públicas e Educativas</h2><p>Educação, cultura, jornalismo público e informação institucional.</p></div></div><div class="tv-channel-track">${publicChannels.map(renderCard).join("")}</div>`;
     bind(host);
   }
 
