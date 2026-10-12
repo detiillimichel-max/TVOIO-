@@ -90,6 +90,11 @@
       window.openPlayer({source:"official-embed",id:ch.officialEmbedUrl,title:ch.name,meta:`${ch.country} · ${ch.category} · player oficial da emissora`});
       return;
     }
+    // Quando não há live contínua, abrir a lista dinâmica de vídeos oficiais dentro do player.
+    if (ch.youtubePlaylistId) {
+      window.openPlayer({source:"youtube-playlist",id:ch.youtubePlaylistId,title:ch.name,meta:`${ch.country} · ${ch.category} · vídeos oficiais da emissora`});
+      return;
+    }
     // Priorizar o live endpoint do canal: vídeos fixos podem estar privados ou encerrados.
     if (ch.youtubeChannelId) {
       window.openPlayer({source:"youtube-live",id:ch.youtubeChannelId,title:ch.name,meta:`${ch.country} · ${ch.category} · procurando transmissão ao vivo oficial`});
