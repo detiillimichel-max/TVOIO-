@@ -38,7 +38,7 @@
     {id:"tv-brasil",name:"TV Brasil",category:"Pública e Educativa",country:"🇧🇷 Brasil",logoUrl:domainLogo("tvbrasil.ebc.com.br"),youtubeId:null,group:"publica",officialEmbedUrl:"https://aovivo.ebc.com.br/embed-tvbrasil.html",youtubeUrl:"https://tvbrasil.ebc.com.br/webtv/"},
     {id:"canal-futura",name:"Canal Futura",category:"Educação e Ciência",country:"🇧🇷 Brasil",logoUrl:domainLogo("futura.frm.org.br"),youtubeId:null,group:"publica",youtubeUrl:"https://futura.frm.org.br/como-assistir"},
     {id:"tv-camara",name:"TV Câmara",category:"Legislativo",country:"🇧🇷 Brasil",logoUrl:domainLogo("camara.leg.br"),youtubeId:null,group:"publica",officialEmbedUrl:"https://www2.camara.leg.br/camaranoticias/tv/embedAoVivo.html",youtubeUrl:"https://www2.camara.leg.br/camaranoticias/tv/aoVivo.html"},
-    {id:"tv-senado",name:"TV Senado",category:"Legislativo",country:"🇧🇷 Brasil",logoUrl:domainLogo("senado.leg.br"),youtubeId:null,youtubeChannelId:"UCLgti7NuK0RuW9wty-fxPjQ",group:"publica",youtubeUrl:"https://www.youtube.com/@tvsenado"},
+    {id:"tv-senado",name:"TV Senado",category:"Legislativo",country:"🇧🇷 Brasil",logoUrl:domainLogo("senado.leg.br"),youtubeId:"apuHZJ1-sp8",youtubeChannelId:null,group:"publica",youtubeUrl:"https://www.youtube.com/watch?v=apuHZJ1-sp8"},
     {id:"tv-justica",name:"TV Justiça",category:"Judiciário",country:"🇧🇷 Brasil",logoUrl:domainLogo("portal.stf.jus.br"),youtubeId:null,group:"publica",youtubeUrl:"https://portal.stf.jus.br/"}
   ];
 
