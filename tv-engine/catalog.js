@@ -9,9 +9,9 @@
 
     const seen = new Set();
     const channels = raw.channels.map(item => {
-      const id = text(item.id);
+      const id = text(item.engineId || item.id).replace(/^engine-/, "");
       const name = text(item.name);
-      const url = text(item.url);
+      const url = text(item.url || item.streamUrl);
       if (!id || !name || !url) return null;
 
       const identity = id.toLowerCase() + "|" + url.toLowerCase();
@@ -29,9 +29,9 @@
         category: text(item.category) || categories[0] || "Outros",
         categories,
         country: "🇧🇷 Brasil",
-        logoUrl: text(item.logo),
+        logoUrl: text(item.logo || item.logoUrl),
         streamUrl: url,
-        streamFormat: text(item.format).toLowerCase() || "unknown",
+        streamFormat: text(item.format || item.streamFormat).toLowerCase() || "unknown",
         source: text(item.source),
         validation: text(item.playback_check)
       };
