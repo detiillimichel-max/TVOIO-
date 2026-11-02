@@ -53,6 +53,7 @@
     "cazetv": "cazetv"
   };
   let liveData = {};
+  let engineChannels = [];
 
   function confirmedLive(ch) {
     const entry = liveData[LIVE_KEYS[ch.id] || ch.id];
@@ -81,6 +82,18 @@
   function openChannel(ch) {
     const liveId = confirmedLive(ch);
     if (typeof window.openPlayer !== "function") return;
+    if (ch.engineSource && ch.streamUrl) {
+      if (ch.streamFormat === "hls") {
+        window.openPlayer({source:"hls",id:ch.streamUrl,title:ch.name,meta:`${ch.category} · TV-BRASIL-ENGINE · HLS`});
+        return;
+      }
+      if (ch.streamFormat === "mpegts") {
+        window.openPlayer({source:"channel-unavailable",id:ch.streamUrl,title:ch.name,meta:`${ch.category} · MPEG-TS · formato preservado; reprodução direta requer suporte adicional`});
+        return;
+      }
+      window.openPlayer({source:"channel-unavailable",id:ch.streamUrl,title:ch.name,meta:`${ch.category} · formato ${ch.streamFormat} ainda sem suporte no player`});
+      return;
+    }
     if (liveId) {
       window.openPlayer({source:"youtube",id:liveId,title:ch.name,meta:`${ch.country} · ${ch.category} · transmissão ao vivo confirmada`});
       return;
@@ -131,17 +144,40 @@
 
   function render() {
     const host=document.getElementById("tv-channels-home"); if(!host)return;
-    const mainChannels = tvChannelsData.filter(ch => ch.group !== "publica");
-    const publicChannels = tvChannelsData.filter(ch => ch.group === "publica");
+    const allChannels = [...tvChannelsData, ...engineChannels];
+    const mainChannels = allChannels.filter(ch => ch.group !== "publica");
+    const publicChannels = allChannels.filter(ch => ch.group === "publica");
     host.innerHTML=`<div class="section-title tv-section-title"><div><p class="youtube-home-kicker">TV · Emissoras</p><h2>📺 Emissoras</h2><p>As emissoras abrem no player do TV OIO. Quando uma transmissão não pode ser incorporada, o app informa a indisponibilidade.</p></div></div><div class="tv-channel-track">${mainChannels.map(renderCard).join("")}</div><div class="section-title tv-section-title"><div><p class="youtube-home-kicker">TV · Serviço público</p><h2>📡 Públicas e Educativas</h2><p>Educação, cultura, jornalismo público e informação institucional.</p></div></div><div class="tv-channel-track">${publicChannels.map(renderCard).join("")}</div>`;
     bind(host);
   }
 
   window.TVOIO_TV_CHANNELS=tvChannelsData;
   window.renderTVOIOTvChannels=render;
+  async function loadEngineCatalog() {
+    try {
+      if (!window.TVEngineConnector) throw new Error("Conector do motor não carregado.");
+      const result = await window.TVEngineConnector.load();
+      const legacyKeys = new Set(tvChannelsData.map(ch => String(ch.name || "").trim().toLowerCase()));
+      const legacyIds = new Set(tvChannelsData.map(ch => String(ch.id || "").trim().toLowerCase()));
+      engineChannels = result.catalog.channels
+        .filter(ch => !legacyIds.has(String(ch.id).toLowerCase()) && !legacyKeys.has(String(ch.name).trim().toLowerCase()))
+        .map(ch => ({ ...ch, engineSource: true }));
+      console.info("TV OIO: catálogo TV-BRASIL-ENGINE carregado.", {
+        source: result.source,
+        stale: result.stale,
+        total: result.catalog.totalChannels,
+        added: engineChannels.length,
+        updatedAt: result.catalog.updatedAt
+      });
+    } catch (error) {
+      engineChannels = [];
+      console.warn("TV OIO: não foi possível carregar o catálogo externo; canais antigos preservados.", error);
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", async () => {
     render();
-    await loadLiveData();
+    await Promise.all([loadLiveData(), loadEngineCatalog()]);
     render();
   });
 })();
