@@ -1,0 +1,23 @@
+{
+  "id": "./",
+  "name": "TV OIO",
+  "short_name": "TV OIO",
+  "description": "TV OIO — música Audius e emissoras de televisão.",
+  "lang": "pt-BR",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#070a0f",
+  "theme_color": "#070a0f",
+  "categories": ["entertainment", "music", "video"],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
