@@ -1,10 +1,5 @@
-const CACHE_NAME = 'tvoio-pwa-v4.1.1.2';
-const APP_SHELL = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon.svg'
-];
+const CACHE_NAME = 'tvoio-pwa-v4.1.1.3';
+const APP_SHELL = ['./', './index.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -30,39 +25,33 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return;
-  if (url.pathname.includes('/api/')) return;
+  if (url.origin !== self.location.origin || url.pathname.includes('/api/')) return;
   if (request.headers.has('range')) return;
 
-  // HTML: tenta a versão publicada primeiro para não prender o app em uma versão antiga.
   if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(request)
-        .then(response => {
-          if (response && response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put('./index.html', copy));
-          }
-          return response;
-        })
-        .catch(() => caches.match(request).then(cached => cached || caches.match('./index.html')))
+      fetch(request).then(response => {
+        if (response && response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put('./index.html', copy));
+        }
+        return response;
+      }).catch(() =>
+        caches.match(request).then(cached => cached || caches.match('./index.html'))
+      )
     );
     return;
   }
 
-  // Arquivos estáticos locais: cache primeiro, rede como alternativa.
   if (['style', 'script', 'image', 'font'].includes(request.destination)) {
     event.respondWith(
-      caches.match(request).then(cached => {
-        if (cached) return cached;
-        return fetch(request).then(response => {
-          if (response && response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
-          }
-          return response;
-        });
-      })
+      caches.match(request).then(cached => cached || fetch(request).then(response => {
+        if (response && response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+        }
+        return response;
+      }))
     );
   }
 });
