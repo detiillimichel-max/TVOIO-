@@ -5,7 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#070a0f">
   <meta name="description" content="TV OIO — Audius e emissoras de TV.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TV OIO">
   <title>TV OIO</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon.svg">
   <link rel="stylesheet" href="./css/style.css?v=30.6">
   <link rel="stylesheet" href="./css/audio-home.css">
   <link rel="stylesheet" href="./css/tv-channels.css">
@@ -97,6 +104,15 @@
   window.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) window.lucide.createIcons();
   });
+
+  // Registro do PWA: o caminho relativo respeita o subdiretório do GitHub Pages.
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js', { scope: './' })
+        .then(registration => console.info('[TV OIO] PWA ativo:', registration.scope))
+        .catch(error => console.error('[TV OIO] Falha ao registrar PWA:', error));
+    });
+  }
 </script>
 </body>
 </html>
